@@ -3,6 +3,7 @@
 ;;	Compatibility: Windows Xp , Windows Vista , Windows 7 , Windows 8
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
+;;	Use as a developpement tool for AHK
 
 ;;--- Softwares Variables ---
 
@@ -14,11 +15,11 @@
 	SetTitleMatchMode, 2
 
 	SetEnv, title, Pwip
-	SetEnv, mode, Put Windows In Place
-	SetEnv, version, Version 2017-10-12-0922
+	SetEnv, mode, Put Windows In Place. AHK developpement.
+	SetEnv, version, Version 2017-10-21-0849
 	SetEnv, Author, LostByteSoft
 	SetEnv, logoicon, ico_Windows.ico
-	SetEnv, Persistant, 0
+	SetEnv, fromlogo, 0
 
 	SysGet, Mon1, Monitor, 1
 	FileInstall, ico_Windows.ico, ico_Windows.ico, 0	;; Needed for icon
@@ -27,12 +28,14 @@
 	FileInstall, ico_options.ico, ico_options.ico, 0
 	FileInstall, ico_reboot.ico, ico_reboot.ico, 0
 	FileInstall, ico_shut.ico, ico_shut.ico, 0
+	FileInstall, ico_debug.ico, ico_debug.ico, 0
+	FileInstall, ico_pause.ico, ico_pause.ico, 0
 
 ;;--- Menu Tray options ---
 
 	Menu, Tray, NoStandard
-	Menu, tray, add, --= %mode% =--, about
-	Menu, Tray, Icon, --= %mode% =--, %logoicon%
+	Menu, tray, add, ---=== %title% ===---, about
+	Menu, Tray, Icon, ---=== %title% ===---, %logoicon%
 	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
@@ -42,40 +45,71 @@
 	menu, tray, disable, Author %author%
 	Menu, tray, add, %version%, about
 	menu, tray, disable, %version%
+	Menu, tray, add,
+	Menu, tray, add, --== Control ==--, about
+	Menu, Tray, Icon, --== Control ==--, ico_options.ico
+	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
+	Menu, Tray, Icon, Exit %title%, ico_shut.ico
+	Menu, tray, add, Refresh (ini mod), doReload 				; Reload the script.
+	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico
+	Menu, tray, add, Set Debug (Toggle), debug
+	Menu, Tray, Icon, Set Debug (Toggle), ico_debug.ico
+	Menu, tray, add, Pause (Toggle), pause
+	Menu, Tray, Icon, Pause (Toggle), ico_pause.ico
+	Menu, tray, add,
+	Menu, tray, add, --== Options ==--, about
+	Menu, Tray, Icon, --== Options ==--, ico_options.ico
 	menu, tray, add
-	Menu, tray, add, Exit, ExitApp				; GuiClose exit program
-	Menu, Tray, Icon, Exit, ico_shut.ico
-	Menu, tray, add, Refresh, doReload				; Reload the script.
-	Menu, Tray, Icon, Refresh, ico_reboot.ico
+	menu, tray, add, Get the Win Resolution, ShowWinRes
 	menu, tray, add
-	menu, tray, add, Set persistant in tray, persistant
+	menu, tray, add, Get the Scr Resolution, ShowScrRes
 	menu, tray, add
-	menu, tray, add, --= Show Gui =--, start
-	Menu, Tray, Icon, --= Show Gui =--, ico_options.ico
+	menu, tray, add, Show Gui, start
 	menu, tray, add,
 	Menu, Tray, Tip, %mode%
 
 ;;--- Software start here ---
 
+	goto, sleep2
+
 start:
 	Gui, destroy
 	SetEnv, fromlogo, 0
-	Gui, Add, Text, x25 y30 w430 h40 , Click on a resolution you want AND click on a windows you want to be resize. (esc or cancel to quit) Persistant=%persistant%
+	Gui, Add, Text, x25 y30 w500 h40 , Click on a resolution you want AND click on a windows you want to be resize. (Cancel to close Gui)
+
+	;; 1 col
+	Gui, Add, Text, x70 y50 w35 h20 , 4 / 3
 	Gui, Add, Button, x50 y75 w75 h30 , 640x480
 	Gui, Add, Button, x50 y125 w75 h30 , 800x600
 	Gui, Add, Button, x50 y175 w75 h30 , 1024x768
 	Gui, Add, Button, x50 y225 w75 h30 , 1152x864
+
+	;; 2 col
+	Gui, Add, Text, x170 y50 w35 h20 , 16 / 9
 	Gui, Add, Button, x150 y75 w75 h30 , 1280x720
 	Gui, Add, Button, x150 y125 w75 h30 , 1360x768
-	Gui, Add, Button, x150 y175 w75 h30 , 1680x1050
+	Gui, Add, Button, x150 y175 w75 h30 , 1600x900
 	Gui, Add, Button, x150 y225 w75 h30 , 1920x1080
-	Gui, Add, Button, x250 y175 w75 h30 , SetPersistant
-	Gui, Add, Button, x250 y225 w75 h30 , FitToScreen
-	Gui, Add, Button, x350 y75 w75 h30 , LogoIcon
-	Gui, Add, Button, x350 y125 w75 h30 , Secret
-	Gui, Add, Button, x350 y175 w75 h30 , Author
-	Gui, Add, Button, x350 y225 w75 h30 , Cancel
-	Gui, Show, x1095 y420 h300 w500, %title% %mode%
+
+	;; 3 col
+	Gui, Add, Text, x270 y50 w35 h20 , 16 / 10
+	Gui, Add, Button, x250 y75 w75 h30 , 1680x1050
+
+	;; 4 col
+	Gui, Add, Text, x370 y50 w35 h20 , Vary
+	Gui, Add, Button, x350 y75 w75 h30 , FitToScreen
+	Gui, Add, Text, x370 y155 w35 h20 , Get the
+	Gui, Add, Button, x350 y175 w75 h30 , Win_Res
+	Gui, Add, Button, x350 y225 w75 h30 , Scr_Res
+
+	;; 5 col
+	Gui, Add, Text, x470 y50 w35 h20 , Options
+	Gui, Add, Button, x450 y75 w75 h30 , LogoIcon
+	Gui, Add, Button, x450 y125 w75 h30 , Secret
+	Gui, Add, Button, x450 y175 w75 h30 , Author
+	Gui, Add, Button, x450 y225 w75 h30 , Cancel
+
+	Gui, Show, h300 w585, %title% %mode%
 	Return
 
 ;;--- Resolutions ---
@@ -88,7 +122,7 @@ Button640x480:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 640, 480
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button800x600:
 	Gui, destroy
@@ -98,7 +132,7 @@ Button800x600:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 800, 600
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button1024x768:
 	Gui, destroy
@@ -108,7 +142,7 @@ Button1024x768:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 1024, 768
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button1152x864:
 	Gui, destroy
@@ -118,7 +152,7 @@ Button1152x864:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 1152, 864
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button1280x720:
 	Gui, destroy
@@ -128,7 +162,7 @@ Button1280x720:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 1280, 720
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button1360x768:
 	Gui, destroy
@@ -138,7 +172,7 @@ Button1360x768:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 1360, 768
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button1600x900:
 	Gui, destroy
@@ -148,7 +182,7 @@ Button1600x900:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 1600, 900
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button1680x1050:
 	Gui, destroy
@@ -158,7 +192,7 @@ Button1680x1050:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 1680, 1050
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 Button1920x1080:
 	Gui, destroy
@@ -168,7 +202,7 @@ Button1920x1080:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , x, y, 1920, 1080
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
 ButtonFitToScreen:
 	Gui, destroy
@@ -178,28 +212,80 @@ ButtonFitToScreen:
 	WinGetPos, X, Y
 	WinMove, %activeWindow%, , 0, 0, %Mon1Right%, %Mon1Bottom%
 	WinActivate, %activeWindow%
-	Goto, ButtonCancel
+	Goto, sleep2
 
-tray:
+ShowWinRes:
+ButtonWin_Res:
 	Gui, destroy
-	Sleep, 500000
-	Goto, tray
+	TrayTip, %title%, Click on a Windows with left mouse button !, 1, 2
+	KeyWait, LButton, D
+	Sleep, 250
+	WinGetTitle, WinTitle, A
+	WinGetPos , X, Y, Width, Height, A
+	Sleep, 750
+	TrayTip, %title%, %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : Data is in clipboard., 3, 2
+	clipboard = %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : %WinTitle% %x% %y% %width% %height%
+	goto, sleep2
 
-ButtonSetPersistant:
-persistant:
-	Ifequal, persistant, 1, goto, remove
-	SetEnv, persistant, 1
-	Goto, tray
+ShowScrRes:
+ButtonScr_Res:
+	Gui, destroy
+	SysGet, MonitorCount, MonitorCount
+	SysGet, MonitorPrimary, MonitorPrimary
+	SysGet, Mon1, Monitor, 1
+	IfEqual, MonitorCOunt, 2, goto, 2monitor
+	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : Data is in clipboard., 3, 2
+	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
+	goto, sleep2
 
-	Remove:
-	SetEnv, persistant, 0
+2monitor:
+	SysGet, Mon1, Monitor, 2
+	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%`n`nMon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : Data is in clipboard., 3, 2
+	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
+	goto, sleep2
+
+;;--- Debug Pause ---
+
+debug:
+	IniRead, debug, MoveActiveToSecondMonitor.ini, options, debug
+	IfEqual, debug, 0, goto, debug1
+	IfEqual, debug, 1, goto, debug0
+
+	debug0:
+	SetEnv, debug, 0
+	IniWrite, 0, MoveActiveToSecondMonitor.ini, options, debug
+	goto, doReload
+
+	debug1:
+	SetEnv, debug, 1
+	IniWrite, 1, MoveActiveToSecondMonitor.ini, options, debug
+	goto, doReload
+
+pause:
+	Ifequal, pause, 0, goto, paused
+	Ifequal, pause, 1, goto, unpaused
+
+	paused:
+	Menu, Tray, Icon, ico_pause.ico
+	SetEnv, pause, 1
+	goto, sleep
+
+	unpaused:	
+	Menu, Tray, Icon, ico_time_w.ico
+	SetEnv, pause, 0
 	Goto, start
+
+	sleep:
+	Menu, Tray, Icon, ico_pause.ico
+	sleep2:
+	sleep, 500000
+	goto, sleep
 
 ;;--- Quit (escape , esc) ---
 
 ButtonCancel:
-	IfEqual, persistant, 1, Goto, tray
-	goto, ExitApp
+	Gui, destroy
+	goto, sleep2
 
 doReload:
 	Gui, destroy
@@ -210,13 +296,11 @@ ExitApp:
 	Gui, destroy
 	ExitApp
 
-Escape::		; Debug purpose, or here just quit.
+;Escape::		; Debug purpose, or here just quit.
 	Gui, destroy
-	IfEqual, persistant, 1, Goto, tray
 	ExitApp
 
 GuiClose:
-	IfEqual, persistant, 1, Goto, tray
 	IfEqual, fromlogo, 1, Goto, start
 	Goto, ExitApp
 
@@ -224,7 +308,7 @@ GuiClose:
 
 ButtonSecret:
 secret:
-	MsgBox, 64, WMC Fit Screen, All variables is shown here.`n`nTitle=%title% mode=%mode% version=%version% author=%author%.`n`nPersistant=%persistant%
+	MsgBox, 64, WMC Fit Screen, All variables is shown here.`n`nTitle=%title% mode=%mode% version=%version% author=%author%.`n`n%clipboard%
 	Return
 
 about:
@@ -239,7 +323,7 @@ version:
 
 ButtonAuthor:
 author:
-	MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to place automaticly a windows in a specified resolution. Usefull for windows doesn't have the ability to do this.`n`n`tGo to https://github.com/LostByteSoft
+	MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to place automaticly a windows in a specified resolutionand use as a developpement tool for AHK. Usefull for windows doesn't have the ability to do this.`n`n`tGo to https://github.com/LostByteSoft
 	Return
 
 ButtonLogoIcon:
