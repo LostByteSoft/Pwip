@@ -4,6 +4,7 @@
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 ;;	Use as a developpement tool for AHK
+;;	This entire thing (work) is a developpement tool for AHK scripting.
 
 ;;--- Softwares Variables ---
 
@@ -15,13 +16,16 @@
 	SetTitleMatchMode, 2
 
 	SetEnv, title, Pwip
-	SetEnv, mode, Put Windows In Place. AHK developpement.
-	SetEnv, version, Version 2017-10-21-0849
+	SetEnv, mode, Put Windows In Place. AHK developpement tool.
+	SetEnv, version, Version 2017-10-27-1103
 	SetEnv, Author, LostByteSoft
 	SetEnv, logoicon, ico_Windows.ico
 	SetEnv, fromlogo, 0
 
 	SysGet, Mon1, Monitor, 1
+	SysGet, Mon2, Monitor, 2
+	;; 	SysGet, Mon3, Monitor, 3
+
 	FileInstall, ico_Windows.ico, ico_Windows.ico, 0	;; Needed for icon
 	FileInstall, ico_about.ico, ico_about.ico, 0
 	FileInstall, ico_lock.ico, ico_lock.ico, 0
@@ -30,6 +34,7 @@
 	FileInstall, ico_shut.ico, ico_shut.ico, 0
 	FileInstall, ico_debug.ico, ico_debug.ico, 0
 	FileInstall, ico_pause.ico, ico_pause.ico, 0
+	;FileInstall, Ico_common.dll, Ico_common.dll, 0
 
 ;;--- Menu Tray options ---
 
@@ -61,7 +66,6 @@
 	Menu, Tray, Icon, --== Options ==--, ico_options.ico
 	menu, tray, add
 	menu, tray, add, Get the Win Resolution, ShowWinRes
-	menu, tray, add
 	menu, tray, add, Get the Scr Resolution, ShowScrRes
 	menu, tray, add
 	menu, tray, add, Show Gui, start
@@ -75,7 +79,7 @@
 start:
 	Gui, destroy
 	SetEnv, fromlogo, 0
-	Gui, Add, Text, x25 y30 w500 h40 , Click on a resolution you want AND click on a windows you want to be resize. (Cancel to close Gui)
+	Gui, Add, Text, x25 y30 w500 h40 , Click on a resolution you want AND click on a windows you want to be resize.
 
 	;; 1 col
 	Gui, Add, Text, x70 y50 w35 h20 , 4 / 3
@@ -83,6 +87,7 @@ start:
 	Gui, Add, Button, x50 y125 w75 h30 , 800x600
 	Gui, Add, Button, x50 y175 w75 h30 , 1024x768
 	Gui, Add, Button, x50 y225 w75 h30 , 1152x864
+	Gui, Add, Button, x50 y275 w75 h30 , 1600x1200
 
 	;; 2 col
 	Gui, Add, Text, x170 y50 w35 h20 , 16 / 9
@@ -107,9 +112,13 @@ start:
 	Gui, Add, Button, x450 y75 w75 h30 , LogoIcon
 	Gui, Add, Button, x450 y125 w75 h30 , Secret
 	Gui, Add, Button, x450 y175 w75 h30 , Author
-	Gui, Add, Button, x450 y225 w75 h30 , Cancel
+	Gui, Add, Button, x450 y225 w75 h30 , Icon_Viewer
+	Gui, Add, Button, x450 y275 w75 h30 , Cancel
 
-	Gui, Show, h300 w585, %title% %mode%
+	Gui, Add, Text, x150 y275 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
+	Gui, Add, Text, x150 y290 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
+
+	Gui, Show, h320 w585, %title% %mode%
 	Return
 
 ;;--- Resolutions ---
@@ -184,6 +193,16 @@ Button1600x900:
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
+Button1600x1200:
+	Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , x, y, 1600, 1200
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
 Button1680x1050:
 	Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
@@ -206,11 +225,12 @@ Button1920x1080:
 
 ButtonFitToScreen:
 	Gui, destroy
+	SysGet, Mon10, MonitorWorkArea
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , 0, 0, %Mon1Right%, %Mon1Bottom%
+	WinMove, %activeWindow%, , 0, 0, %Mon10Right%, %Mon10Bottom%
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
@@ -227,6 +247,34 @@ ButtonWin_Res:
 	clipboard = %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : %WinTitle% %x% %y% %width% %height%
 	goto, sleep2
 
+ButtonIcon_Viewer:
+	;; This is a developpement version for an DLL file icons library. This is not really implemented.
+	SetEnv, icons, 1
+	Gui, destroy
+	nexticon2:
+	Ico_common := A_ScriptDir . "\Ico_common.dll"	 ; Icon path
+	Gui, Font, s10
+	Gui, Add, Text, x275 y10 cWhite, A_ScriptDirr=%A_ScriptDir%
+	Gui, Add, Text, x357 y25 cWhite, Icons Number=%Icons% 
+	Gui Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %Ico_common%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
+	Gui, Font, s14
+	Gui, Add, Button, x5 y5 , Next_Ico
+	Gui, Add, Button, x100 y5 , Change_Tray
+	Gui, Add, Picture, Icon50, "%A_ScriptDir%"\Ico_common.dll
+	Gui, Show, , %title% Logo
+	Gui, Color, add8e6		; Hex color light blue
+	SetEnv, fromlogo, 1
+	Return
+
+	ButtonNext_Ico:
+		IfEqual, icons, 7, goto, start
+		EnvAdd, icons, 1
+		Goto, nexticon2
+
+	ButtonChange_Tray:
+		Menu, Tray, Icon, %Ico_common%,%icons%
+		Goto, nexticon2
+
 ShowScrRes:
 ButtonScr_Res:
 	Gui, destroy
@@ -238,40 +286,36 @@ ButtonScr_Res:
 	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
 	goto, sleep2
 
-2monitor:
-	SysGet, Mon1, Monitor, 2
-	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%`n`nMon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : Data is in clipboard., 3, 2
-	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
-	goto, sleep2
+	2monitor:
+		SysGet, Mon1, Monitor, 2
+		TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%`n`nMon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : Data is in clipboard., 3, 2
+		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
+		goto, sleep2
 
 ;;--- Debug Pause ---
 
 debug:
-	IniRead, debug, MoveActiveToSecondMonitor.ini, options, debug
 	IfEqual, debug, 0, goto, debug1
 	IfEqual, debug, 1, goto, debug0
 
 	debug0:
 	SetEnv, debug, 0
-	IniWrite, 0, MoveActiveToSecondMonitor.ini, options, debug
-	goto, doReload
+	goto, start
 
 	debug1:
 	SetEnv, debug, 1
-	IniWrite, 1, MoveActiveToSecondMonitor.ini, options, debug
-	goto, doReload
+	goto, start
 
 pause:
 	Ifequal, pause, 0, goto, paused
 	Ifequal, pause, 1, goto, unpaused
 
 	paused:
-	Menu, Tray, Icon, ico_pause.ico
 	SetEnv, pause, 1
 	goto, sleep
 
 	unpaused:	
-	Menu, Tray, Icon, ico_time_w.ico
+	Menu, Tray, Icon, %logoicon%
 	SetEnv, pause, 0
 	Goto, start
 
@@ -279,7 +323,7 @@ pause:
 	Menu, Tray, Icon, ico_pause.ico
 	sleep2:
 	sleep, 500000
-	goto, sleep
+	goto, sleep2
 
 ;;--- Quit (escape , esc) ---
 
@@ -296,19 +340,20 @@ ExitApp:
 	Gui, destroy
 	ExitApp
 
+GuiClose:
+	Gui, destroy
+	IfEqual, fromlogo, 1, Goto, start
+	Goto, sleep2
+
 ;Escape::		; Debug purpose, or here just quit.
 	Gui, destroy
 	ExitApp
-
-GuiClose:
-	IfEqual, fromlogo, 1, Goto, start
-	Goto, ExitApp
 
 ;;--- Tray Bar (must be at end of file) ---
 
 ButtonSecret:
 secret:
-	MsgBox, 64, WMC Fit Screen, All variables is shown here.`n`nTitle=%title% mode=%mode% version=%version% author=%author%.`n`n%clipboard%
+	MsgBox, 64, WMC Fit Screen, All variables is shown here.`n`nTitle=%title% mode=%mode% version=%version% author=%author%.`n`nClipboard (if text)=%clipboard%
 	Return
 
 about:
