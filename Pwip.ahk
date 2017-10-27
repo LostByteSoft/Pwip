@@ -5,6 +5,7 @@
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 ;;	Use as a developpement tool for AHK
 ;;	This entire thing (work) is a developpement tool for AHK scripting.
+;;	Use an external DLL file for icon is shit load of job and the final quality is less.
 
 ;;--- Softwares Variables ---
 
@@ -17,16 +18,15 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-10-27-1103
+	SetEnv, version, Version 2017-10-27-1303
 	SetEnv, Author, LostByteSoft
-	SetEnv, logoicon, ico_Windows.ico
+	SetEnv, logoicon, Ico_Windows.ico
 	SetEnv, fromlogo, 0
 
 	SysGet, Mon1, Monitor, 1
 	SysGet, Mon2, Monitor, 2
-	;; 	SysGet, Mon3, Monitor, 3
 
-	FileInstall, ico_Windows.ico, ico_Windows.ico, 0	;; Needed for icon
+	FileInstall, ico_Windows.ico, ico_Windows.ico, 0
 	FileInstall, ico_about.ico, ico_about.ico, 0
 	FileInstall, ico_lock.ico, ico_lock.ico, 0
 	FileInstall, ico_options.ico, ico_options.ico, 0
@@ -34,7 +34,7 @@
 	FileInstall, ico_shut.ico, ico_shut.ico, 0
 	FileInstall, ico_debug.ico, ico_debug.ico, 0
 	FileInstall, ico_pause.ico, ico_pause.ico, 0
-	;FileInstall, Ico_common.dll, Ico_common.dll, 0
+	FileInstall, Ico_common.dll, Ico_common.dll, 0
 
 ;;--- Menu Tray options ---
 
@@ -77,6 +77,7 @@
 	goto, sleep2
 
 start:
+	Menu, Tray, Icon, %Ico_common%,8
 	Gui, destroy
 	SetEnv, fromlogo, 0
 	Gui, Add, Text, x25 y30 w500 h40 , Click on a resolution you want AND click on a windows you want to be resize.
@@ -258,22 +259,26 @@ ButtonIcon_Viewer:
 	Gui, Add, Text, x357 y25 cWhite, Icons Number=%Icons% 
 	Gui Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %Ico_common%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
 	Gui, Font, s14
-	Gui, Add, Button, x5 y5 , Next_Ico
-	Gui, Add, Button, x100 y5 , Change_Tray
+	Gui, Add, Button, x5 y5 , Next
+	Gui, Add, Button, x75 y5 , Tray
+	Gui, Add, Button, x150 y5 , Menu
 	Gui, Add, Picture, Icon50, "%A_ScriptDir%"\Ico_common.dll
 	Gui, Show, , %title% Logo
 	Gui, Color, add8e6		; Hex color light blue
 	SetEnv, fromlogo, 1
 	Return
 
-	ButtonNext_Ico:
-		IfEqual, icons, 7, goto, start
+	ButtonNext:
+		IfEqual, icons, 8, goto, start
 		EnvAdd, icons, 1
 		Goto, nexticon2
 
-	ButtonChange_Tray:
+	ButtonTray:
 		Menu, Tray, Icon, %Ico_common%,%icons%
 		Goto, nexticon2
+
+	ButtonMenu:
+		Goto, start
 
 ShowScrRes:
 ButtonScr_Res:
@@ -374,7 +379,8 @@ author:
 ButtonLogoIcon:
 	Gui, Destroy
 GuiLogo:
-	Gui, Add, Picture, x25 y25 w400 h400 , %logoicon%
+	Ico_common := A_ScriptDir . "\Ico_common.dll"
+	Gui Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %Ico_common%
 	Gui, Show, w450 h450, %title% Logo
 	Gui, Color, 000000
 	SetEnv, fromlogo, 1
