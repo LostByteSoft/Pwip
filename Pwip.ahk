@@ -1,4 +1,4 @@
-;;--- Head --- Informations --- AHK ---
+«;;--- Head --- Informations --- AHK ---
 
 ;;	Compatibility: Windows Xp , Windows Vista , Windows 7 , Windows 8
 ;;	All files must be in same folder. Where you want.
@@ -18,11 +18,13 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-10-27-1303
+	SetEnv, version, Version 2017-10-29-0817
 	SetEnv, Author, LostByteSoft
 	SetEnv, logoicon, Ico_Windows.ico
 	SetEnv, fromlogo, 0
 
+	SysGet, MonitorCount, MonitorCount
+	SysGet, MonitorPrimary, MonitorPrimary
 	SysGet, Mon1, Monitor, 1
 	SysGet, Mon2, Monitor, 2
 
@@ -34,14 +36,14 @@
 	FileInstall, ico_shut.ico, ico_shut.ico, 0
 	FileInstall, ico_debug.ico, ico_debug.ico, 0
 	FileInstall, ico_pause.ico, ico_pause.ico, 0
-	FileInstall, Ico_common.dll, Ico_common.dll, 0
+	;; FileInstall, Ico_common.dll, Ico_common.dll, 0			; Space wasted.
 
 ;;--- Menu Tray options ---
 
 	Menu, Tray, NoStandard
 	Menu, tray, add, ---=== %title% ===---, about
 	Menu, Tray, Icon, ---=== %title% ===---, %logoicon%
-	Menu, tray, add, Show logo, GuiLogo
+	Menu, tray, add, Show logo, GuiLogo1
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
 	Menu, tray, add, About && ReadMe, author
@@ -69,18 +71,22 @@
 	menu, tray, add, Get the Scr Resolution, ShowScrRes
 	menu, tray, add
 	menu, tray, add, Show Gui, start
+	Menu, Tray, Icon, Show Gui, %logoicon%
 	menu, tray, add,
 	Menu, Tray, Tip, %mode%
 
 ;;--- Software start here ---
 
+	TrayTip, %title%, %title% L win + Z, 2, 1
+
 	goto, sleep2
 
+<#Z::
 start:
 	Menu, Tray, Icon, %Ico_common%,8
 	Gui, destroy
 	SetEnv, fromlogo, 0
-	Gui, Add, Text, x25 y30 w500 h40 , Click on a resolution you want AND click on a windows you want to be resize.
+	Gui, Add, Text, x25 y30 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
 
 	;; 1 col
 	Gui, Add, Text, x70 y50 w35 h20 , 4 / 3
@@ -100,13 +106,18 @@ start:
 	;; 3 col
 	Gui, Add, Text, x270 y50 w35 h20 , 16 / 10
 	Gui, Add, Button, x250 y75 w75 h30 , 1680x1050
+	Gui, Add, Text, x275 y160 w40 h20 , Vary
+	Gui, Add, Button, x250 y175 w38 h30 , 1/2 L
+	Gui, Add, Button, x287 y175 w38 h30 , 1/2 R
+	Gui, Add, Button, x250 y225 w75 h30 , FitToScreen
 
 	;; 4 col
-	Gui, Add, Text, x370 y50 w35 h20 , Vary
-	Gui, Add, Button, x350 y75 w75 h30 , FitToScreen
-	Gui, Add, Text, x370 y155 w35 h20 , Get the
-	Gui, Add, Button, x350 y175 w75 h30 , Win_Res
-	Gui, Add, Button, x350 y225 w75 h30 , Scr_Res
+	Gui, Add, Text, x370 y50 w35 h20 , Get the
+	Gui, Add, Button, x350 y75 w75 h30 , Win_Res
+	Gui, Add, Button, x350 y125 w75 h30 , Scr_Res
+	Gui, Add, Text, x370 y160 w50 h20 , Exe call
+	Gui, Add, Button, x350 y175 w75 h30 , HddTemp
+	Gui, Add, Button, x350 y225 w75 h30 , WindowInfo
 
 	;; 5 col
 	Gui, Add, Text, x470 y50 w35 h20 , Options
@@ -117,7 +128,9 @@ start:
 	Gui, Add, Button, x450 y275 w75 h30 , Cancel
 
 	Gui, Add, Text, x150 y275 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
+	IfEqual, MonitorCOunt, 1, goto, 1monitor
 	Gui, Add, Text, x150 y290 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
+	1monitor:
 
 	Gui, Show, h320 w585, %title% %mode%
 	Return
@@ -253,15 +266,15 @@ ButtonIcon_Viewer:
 	SetEnv, icons, 1
 	Gui, destroy
 	nexticon2:
-	Ico_common := A_ScriptDir . "\Ico_common.dll"	 ; Icon path
+	Ico_common := A_ScriptDir . "\Ico_common.dll"					; Icon path
 	Gui, Font, s10
-	Gui, Add, Text, x275 y10 cWhite, A_ScriptDirr=%A_ScriptDir%
-	Gui, Add, Text, x357 y25 cWhite, Icons Number=%Icons% 
+	Gui, Add, Text, x275 y10 cBlack, A_ScriptDirr=%A_ScriptDir%
+	Gui, Add, Text, x357 y25 cBlack, Icons Number=%Icons% 
 	Gui Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %Ico_common%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
 	Gui, Font, s14
-	Gui, Add, Button, x5 y5 , Next
-	Gui, Add, Button, x75 y5 , Tray
-	Gui, Add, Button, x150 y5 , Menu
+	Gui, Add, Button, x5 y5 w75 , Next
+	Gui, Add, Button, x90 y5 w75 , Tray
+	Gui, Add, Button, x175 y5 w75 , Menu
 	Gui, Add, Picture, Icon50, "%A_ScriptDir%"\Ico_common.dll
 	Gui, Show, , %title% Logo
 	Gui, Color, add8e6		; Hex color light blue
@@ -297,6 +310,34 @@ ButtonScr_Res:
 		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
 		goto, sleep2
 
+Button1/2L:
+	Gui, destroy
+	SysGet, Mon15, MonitorWorkArea
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	SetEnv, Mon15Right1, %Mon15Right%
+	Mon15Right1 /= 2
+	;; MsgBox, Mon 15 Left: %Mon15Left% -- Top: %Mon15Top% -- Right: %Mon15Right% -- Bottom %Mon15Bottom% -- Right1=%Mon15Right1% -- activeWindow=%activeWindow%
+	WinMove, %activeWindow%, , 0, 0, %Mon15Right1%, %Mon15Bottom%
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1/2R:
+	Gui, destroy
+	SysGet, Mon16, MonitorWorkArea
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	SetEnv, Mon16Right1, %Mon16Right%
+	Mon16Right1 /= 2
+	;; MsgBox, Mon 16 Left: %Mon16Left% -- Top: %Mon16Top% -- Right: %Mon16Right% -- Bottom %Mon16Bottom% -- Mon16Right1=%Mon16Right1% -- activeWindow=%activeWindow% -- %Mon16Right1% 0 %Mon16Right1% %Mon16Bottom%
+	WinMove, %activeWindow%, , %Mon16Right1%, 0, %Mon16Right1%, %Mon16Bottom%
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
 ;;--- Debug Pause ---
 
 debug:
@@ -305,11 +346,11 @@ debug:
 
 	debug0:
 	SetEnv, debug, 0
-	goto, start
+	Goto, sleep2
 
 	debug1:
 	SetEnv, debug, 1
-	goto, start
+	Goto, sleep2
 
 pause:
 	Ifequal, pause, 0, goto, paused
@@ -329,6 +370,16 @@ pause:
 	sleep2:
 	sleep, 500000
 	goto, sleep2
+
+;;--- Function Exe Call ---
+
+ButtonWindowInfo:
+	Run, ActiveWindowInfo.dll
+	Goto, start
+
+ButtonHddTemp:
+	Run, HddTemp.dll
+	Goto, start
 
 ;;--- Quit (escape , esc) ---
 
@@ -372,19 +423,21 @@ version:
 	Return
 
 ButtonAuthor:
-author:
-	MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to place automaticly a windows in a specified resolutionand use as a developpement tool for AHK. Usefull for windows doesn't have the ability to do this.`n`n`tGo to https://github.com/LostByteSoft
-	Return
+	author:
+		MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to place automaticly a windows in a specified resolutionand use as a developpement tool for AHK. Usefull for windows doesn't have the ability to do this.`n`n`tGo to https://github.com/LostByteSoft
+		Return
 
 ButtonLogoIcon:
 	Gui, Destroy
+
 GuiLogo:
-	Ico_common := A_ScriptDir . "\Ico_common.dll"
-	Gui Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %Ico_common%
-	Gui, Show, w450 h450, %title% Logo
-	Gui, Color, 000000
 	SetEnv, fromlogo, 1
-	Return
+	GuiLogo1:
+		Ico_common := A_ScriptDir . "\Ico_common.dll"
+		Gui Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %Ico_common%
+		Gui, Show, w450 h450, %title% Logo
+		Gui, Color, 000000
+		Return
 
 Goto, Start
 
@@ -414,7 +467,7 @@ Goto, Start
 ;	radiation due to atomic fission, unexpected tax recalls or
 ;	    encounters with extraterrestrial beings 'elsewhere.
 ;
-;              LostByteSoft no copyright or copyleft.
+;      LostByteSoft no copyright or copyleft we are in the center.
 ;
 ;	If you are unhappy with this software i do not care.
 ;
