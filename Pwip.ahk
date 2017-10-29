@@ -1,4 +1,4 @@
-«;;--- Head --- Informations --- AHK ---
+;;--- Head --- Informations --- AHK ---
 
 ;;	Compatibility: Windows Xp , Windows Vista , Windows 7 , Windows 8
 ;;	All files must be in same folder. Where you want.
@@ -86,7 +86,15 @@ start:
 	Menu, Tray, Icon, %Ico_common%,8
 	Gui, destroy
 	SetEnv, fromlogo, 0
-	Gui, Add, Text, x25 y30 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
+	Gui, Add, Text, x25 y5 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
+
+	Gui, Add, Text, x150 y20 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
+	IfEqual, MonitorCOunt, 1, goto, 1monitor
+	Gui, Add, Text, x150 y33 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
+	Goto, 2monitors
+	1monitor:
+	Gui, Add, Text, x150 y33 w300 h20 , Screen 2 is not installed.
+	2monitors:
 
 	;; 1 col
 	Gui, Add, Text, x70 y50 w35 h20 , 4 / 3
@@ -118,6 +126,7 @@ start:
 	Gui, Add, Text, x370 y160 w50 h20 , Exe call
 	Gui, Add, Button, x350 y175 w75 h30 , HddTemp
 	Gui, Add, Button, x350 y225 w75 h30 , WindowInfo
+	Gui, Add, Button, x350 y275 w75 h30 , ProcestList
 
 	;; 5 col
 	Gui, Add, Text, x470 y50 w35 h20 , Options
@@ -126,11 +135,6 @@ start:
 	Gui, Add, Button, x450 y175 w75 h30 , Author
 	Gui, Add, Button, x450 y225 w75 h30 , Icon_Viewer
 	Gui, Add, Button, x450 y275 w75 h30 , Cancel
-
-	Gui, Add, Text, x150 y275 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
-	IfEqual, MonitorCOunt, 1, goto, 1monitor
-	Gui, Add, Text, x150 y290 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
-	1monitor:
 
 	Gui, Show, h320 w585, %title% %mode%
 	Return
@@ -379,6 +383,10 @@ ButtonWindowInfo:
 
 ButtonHddTemp:
 	Run, HddTemp.dll
+	Goto, start
+
+ButtonProcestList:
+	Run, processlist.dll
 	Goto, start
 
 ;;--- Quit (escape , esc) ---
