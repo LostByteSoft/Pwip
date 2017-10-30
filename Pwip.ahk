@@ -18,7 +18,7 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-10-29-0817
+	SetEnv, version, Version 2017-10-30-1817
 	SetEnv, Author, LostByteSoft
 	SetEnv, logoicon, Ico_Windows.ico
 	SetEnv, fromlogo, 0
@@ -88,12 +88,12 @@ start:
 	SetEnv, fromlogo, 0
 	Gui, Add, Text, x25 y5 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
 
-	Gui, Add, Text, x150 y20 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
+	Gui, Add, Text, x200 y20 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
 	IfEqual, MonitorCOunt, 1, goto, 1monitor
-	Gui, Add, Text, x150 y33 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
+	Gui, Add, Text, x200 y33 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
 	Goto, 2monitors
 	1monitor:
-	Gui, Add, Text, x150 y33 w300 h20 , Screen 2 is not installed.
+	Gui, Add, Text, x200 y33 w300 h20 , Screen 2 is not installed.
 	2monitors:
 
 	;; 1 col
@@ -134,9 +134,14 @@ start:
 	Gui, Add, Button, x450 y125 w75 h30 , Secret
 	Gui, Add, Button, x450 y175 w75 h30 , Author
 	Gui, Add, Button, x450 y225 w75 h30 , Icon_Viewer
-	Gui, Add, Button, x450 y275 w75 h30 , Cancel
+	;;;Gui, Add, Button, x450 y275 w75 h30 ,
 
-	Gui, Show, h320 w585, %title% %mode%
+	;; 6 col
+
+	Gui, Add, Button, x550 y225 w50 h30 , ReLoad
+	Gui, Add, Button, x550 y275 w50 h30 , Quit
+
+	Gui, Show, h320 w650, %title% %mode%
 	Return
 
 ;;--- Resolutions ---
@@ -391,10 +396,11 @@ ButtonProcestList:
 
 ;;--- Quit (escape , esc) ---
 
-ButtonCancel:
+ButtonQuit:
 	Gui, destroy
 	goto, sleep2
 
+ButtonReload:
 doReload:
 	Gui, destroy
 	Reload
