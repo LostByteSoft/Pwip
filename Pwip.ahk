@@ -86,7 +86,11 @@ start:
 	Menu, Tray, Icon, %Ico_common%,8
 	Gui, destroy
 	SetEnv, fromlogo, 0
+
+	;; Top lines
 	Gui, Add, Text, x25 y5 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
+
+	Gui, Add, Checkbox, x25 y20 w125 h20 vReImage %checked%, Do not close GUI.
 
 	Gui, Add, Text, x200 y20 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
 	IfEqual, MonitorCOunt, 1, goto, 1monitor
@@ -147,107 +151,118 @@ start:
 ;;--- Resolutions ---
 
 Button640x480:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 640, 480
+	WinMove, %activeWindow%, , , , 640, 480
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button800x600:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 800, 600
+	WinMove, %activeWindow%, , , , 800, 600
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1024x768:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1024, 768
+	WinMove, %activeWindow%, , , , 1024, 768
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1152x864:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1152, 864
+	WinMove, %activeWindow%, , , , 1152, 864
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1280x720:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1280, 720
+	WinMove, %activeWindow%, , , , 1280, 720
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1360x768:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1360, 768
+	WinMove, %activeWindow%, , , , 1360, 768
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1600x900:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1600, 900
+	WinMove, %activeWindow%, , , , 1600, 900
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1600x1200:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1600, 1200
+	WinMove, %activeWindow%, , , , 1600, 1200
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1680x1050:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1680, 1050
+	WinMove, %activeWindow%, , , , 1680, 1050
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 Button1920x1080:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
 	WinGetTitle, activeWindow, A
 	WinGetPos, X, Y
-	WinMove, %activeWindow%, , x, y, 1920, 1080
+	WinMove, %activeWindow%, , , , 1920, 1080
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
 ButtonFitToScreen:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	SysGet, Mon10, MonitorWorkArea
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
@@ -257,23 +272,11 @@ ButtonFitToScreen:
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
-ShowWinRes:
-ButtonWin_Res:
-	Gui, destroy
-	TrayTip, %title%, Click on a Windows with left mouse button !, 1, 2
-	KeyWait, LButton, D
-	Sleep, 250
-	WinGetTitle, WinTitle, A
-	WinGetPos , X, Y, Width, Height, A
-	Sleep, 750
-	TrayTip, %title%, %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : Data is in clipboard., 3, 2
-	clipboard = %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : %WinTitle% %x% %y% %width% %height%
-	goto, sleep2
-
 ButtonIcon_Viewer:
 	;; This is a developpement version for an DLL file icons library. This is not really implemented.
 	SetEnv, icons, 1
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	nexticon2:
 	Ico_common := A_ScriptDir . "\Ico_common.dll"					; Icon path
 	Gui, Font, s10
@@ -302,25 +305,9 @@ ButtonIcon_Viewer:
 	ButtonMenu:
 		Goto, start
 
-ShowScrRes:
-ButtonScr_Res:
-	Gui, destroy
-	SysGet, MonitorCount, MonitorCount
-	SysGet, MonitorPrimary, MonitorPrimary
-	SysGet, Mon1, Monitor, 1
-	IfEqual, MonitorCOunt, 2, goto, 2monitor
-	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : Data is in clipboard., 3, 2
-	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
-	goto, sleep2
-
-	2monitor:
-		SysGet, Mon1, Monitor, 2
-		TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%`n`nMon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : Data is in clipboard., 3, 2
-		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
-		goto, sleep2
-
 Button1/2L:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	SysGet, Mon15, MonitorWorkArea
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
@@ -334,7 +321,8 @@ Button1/2L:
 	Goto, sleep2
 
 Button1/2R:
-	Gui, destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	SysGet, Mon16, MonitorWorkArea
 	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
 	KeyWait, LButton, D
@@ -346,6 +334,38 @@ Button1/2R:
 	WinMove, %activeWindow%, , %Mon16Right1%, 0, %Mon16Right1%, %Mon16Bottom%
 	WinActivate, %activeWindow%
 	Goto, sleep2
+
+ShowWinRes:
+ButtonWin_Res:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, Click on a Windows with left mouse button !, 1, 2
+	KeyWait, LButton, D
+	Sleep, 250
+	WinGetTitle, WinTitle, A
+	WinGetPos , X, Y, Width, Height, A
+	Sleep, 750
+	TrayTip, %title%, %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : Data is in clipboard., 3, 2
+	clipboard = %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : %WinTitle% %x% %y% %width% %height%
+	goto, sleep2
+
+ShowScrRes:
+ButtonScr_Res:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	SysGet, MonitorCount, MonitorCount
+	SysGet, MonitorPrimary, MonitorPrimary
+	SysGet, Mon1, Monitor, 1
+	IfEqual, MonitorCOunt, 2, goto, 2monitor
+	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : Data is in clipboard., 3, 2
+	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
+	goto, sleep2
+
+	2monitor:
+		SysGet, Mon1, Monitor, 2
+		TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%`n`nMon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : Data is in clipboard., 3, 2
+		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
+		goto, sleep2
 
 ;;--- Debug Pause ---
 
