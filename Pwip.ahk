@@ -18,10 +18,9 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-10-30-1817
+	SetEnv, version, Version 2017-11-15-1506
 	SetEnv, Author, LostByteSoft
 	SetEnv, logoicon, Ico_Windows.ico
-	SetEnv, fromlogo, 0
 
 	SysGet, MonitorCount, MonitorCount
 	SysGet, MonitorPrimary, MonitorPrimary
@@ -43,7 +42,7 @@
 	Menu, Tray, NoStandard
 	Menu, tray, add, ---=== %title% ===---, about
 	Menu, Tray, Icon, ---=== %title% ===---, %logoicon%
-	Menu, tray, add, Show logo, GuiLogo1
+	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
 	Menu, tray, add, About && ReadMe, author
@@ -69,6 +68,7 @@
 	menu, tray, add
 	menu, tray, add, Get the Win Resolution, ShowWinRes
 	menu, tray, add, Get the Scr Resolution, ShowScrRes
+	menu, tray, add, Get the Work Resolution, ShowWorkArea
 	menu, tray, add
 	menu, tray, add, Show Gui, start
 	Menu, Tray, Icon, Show Gui, %logoicon%
@@ -85,7 +85,7 @@
 start:
 	Menu, Tray, Icon, %Ico_common%,8
 	Gui, destroy
-	SetEnv, fromlogo, 0
+	IfEqual, reimage, 1, SetEnv, checked, checked
 
 	;; Top lines
 	Gui, Add, Text, x25 y5 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
@@ -112,8 +112,9 @@ start:
 	Gui, Add, Text, x170 y50 w35 h20 , 16 / 9
 	Gui, Add, Button, x150 y75 w75 h30 , 1280x720
 	Gui, Add, Button, x150 y125 w75 h30 , 1360x768
-	Gui, Add, Button, x150 y175 w75 h30 , 1600x900
-	Gui, Add, Button, x150 y225 w75 h30 , 1920x1080
+	; Space for 1366x768
+	Gui, Add, Button, x150 y225 w75 h30 , 1600x900
+	Gui, Add, Button, x150 y275 w75 h30 , 1920x1080
 
 	;; 3 col
 	Gui, Add, Text, x270 y50 w35 h20 , 16 / 10
@@ -124,26 +125,26 @@ start:
 	Gui, Add, Button, x250 y225 w75 h30 , FitToScreen
 
 	;; 4 col
-	Gui, Add, Text, x370 y50 w35 h20 , Get the
-	Gui, Add, Button, x350 y75 w75 h30 , Win_Res
-	Gui, Add, Button, x350 y125 w75 h30 , Scr_Res
-	Gui, Add, Text, x370 y160 w50 h20 , Exe call
-	Gui, Add, Button, x350 y175 w75 h30 , HddTemp
-	Gui, Add, Button, x350 y225 w75 h30 , WindowInfo
-	Gui, Add, Button, x350 y275 w75 h30 , ProcestList
+	Gui, Add, Text, x370 y50 w50 h20 , Exe call
+	Gui, Add, Button, x350 y75 w75 h30 , HddTemp
+	Gui, Add, Button, x350 y125 w75 h30 , WindowInfo
+	Gui, Add, Button, x350 y175 w75 h30 , ProcestList
+	Gui, Add, Button, x350 y225 w75 h30 , Actual Sweep
 
-	;; 5 col
-	Gui, Add, Text, x470 y50 w35 h20 , Options
-	Gui, Add, Button, x450 y75 w75 h30 , LogoIcon
-	Gui, Add, Button, x450 y125 w75 h30 , Secret
-	Gui, Add, Button, x450 y175 w75 h30 , Author
-	Gui, Add, Button, x450 y225 w75 h30 , Icon_Viewer
-	;;;Gui, Add, Button, x450 y275 w75 h30 ,
+	;; 5 col x450
+	Gui, Add, Text, x570 y50 w35 h20 , Options
+	Gui, Add, Button, x550 y75 w75 h30 , LogoIcon
+	Gui, Add, Button, x550 y125 w75 h30 , Secret
+	Gui, Add, Button, x550 y175 w75 h30 , Author
+	Gui, Add, Button, x550 y225 w75 h30 , Icon_Viewer
+	Gui, Add, Button, x550 y275 w75 h30 , ReLoad
 
-	;; 6 col
+	;; 6 col x550
 
-	Gui, Add, Button, x550 y225 w50 h30 , ReLoad
-	Gui, Add, Button, x550 y275 w50 h30 , Quit
+	Gui, Add, Text, x470 y50 w35 h20 , Get the
+	Gui, Add, Button, x450 y75 w75 h30 , Win_Res
+	Gui, Add, Button, x450 y125 w75 h30 , Scr_Res
+	Gui, Add, Button, x450 y175 w75 h30 , Scr_Wrk
 
 	Gui, Show, h320 w650, %title% %mode%
 	Return
@@ -275,14 +276,15 @@ ButtonFitToScreen:
 ButtonIcon_Viewer:
 	;; This is a developpement version for an DLL file icons library. This is not really implemented.
 	SetEnv, icons, 1
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
+	;;GuiControlGet, ReImage,, Reimage
+	;;IfEqual, reimage, 0, Gui, destroy
+	Gui, destroy
 	nexticon2:
 	Ico_common := A_ScriptDir . "\Ico_common.dll"					; Icon path
 	Gui, Font, s10
 	Gui, Add, Text, x275 y10 cBlack, A_ScriptDirr=%A_ScriptDir%
 	Gui, Add, Text, x357 y25 cBlack, Icons Number=%Icons% 
-	Gui Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %Ico_common%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
+	Gui, Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %Ico_common%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
 	Gui, Font, s14
 	Gui, Add, Button, x5 y5 w75 , Next
 	Gui, Add, Button, x90 y5 w75 , Tray
@@ -357,14 +359,28 @@ ButtonScr_Res:
 	SysGet, MonitorPrimary, MonitorPrimary
 	SysGet, Mon1, Monitor, 1
 	IfEqual, MonitorCOunt, 2, goto, 2monitor
-	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : Data is in clipboard., 3, 2
-	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
+	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Data is in clipboard., 3, 2
+	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
 	goto, sleep2
 
 	2monitor:
 		SysGet, Mon1, Monitor, 2
-		TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%`n`nMon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : Data is in clipboard., 3, 2
-		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. : %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
+		TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. - Data is in clipboard., 3, 2
+		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
+		goto, sleep2
+
+ShowWorkArea:
+ButtonScr_Wrk:
+	SysGet, Mon1, MonitorWorkArea, 1
+	IfEqual, MonitorCOunt, 2, goto, 2monitor
+	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Data is in clipboard., 3, 2
+	clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
+	goto, sleep2
+
+	2workmon:
+		SysGet, Mon2, MonitorWorkArea, 2
+		TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 : %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom% - Data is in clipboard., 3, 2
+		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 : %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom% - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
 		goto, sleep2
 
 ;;--- Debug Pause ---
@@ -375,10 +391,12 @@ debug:
 
 	debug0:
 	SetEnv, debug, 0
+	TrayTip, %title%, Deactivated ! debug=%debug%, 1, 2
 	Goto, sleep2
 
 	debug1:
 	SetEnv, debug, 1
+	TrayTip, %title%, Activated ! debug=%debug%, 1, 2
 	Goto, sleep2
 
 pause:
@@ -414,6 +432,10 @@ ButtonProcestList:
 	Run, processlist.dll
 	Goto, start
 
+ButtonActualSweep:
+	Run, actualswap.dll
+	Goto, start
+
 ;;--- Quit (escape , esc) ---
 
 ButtonQuit:
@@ -435,7 +457,7 @@ GuiClose:
 	IfEqual, fromlogo, 1, Goto, start
 	Goto, sleep2
 
-;Escape::		; Debug purpose, or here just quit.
+;	Escape::		; Debug purpose, cause some bizzare thing if always activated.
 	Gui, destroy
 	ExitApp
 
@@ -462,18 +484,20 @@ ButtonAuthor:
 		Return
 
 ButtonLogoIcon:
-	Gui, Destroy
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 
 GuiLogo:
-	SetEnv, fromlogo, 1
-	GuiLogo1:
-		Ico_common := A_ScriptDir . "\Ico_common.dll"
-		Gui Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %Ico_common%
-		Gui, Show, w450 h450, %title% Logo
-		Gui, Color, 000000
-		Return
+	Ico_common := A_ScriptDir . "\Ico_common.dll"
+	Gui, 4:Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %Ico_common%
+	Gui, 4:Show, w450 h450, %title% Logo
+	Gui, 4:Color, 000000
+	Sleep, 500
+	Return
 
-Goto, Start
+4GuiClose:
+	Gui 4:Cancel
+	return
 
 ;;--- End of script ---
 ;
