@@ -129,22 +129,23 @@ start:
 	Gui, Add, Button, x350 y75 w75 h30 , HddTemp
 	Gui, Add, Button, x350 y125 w75 h30 , WindowInfo
 	Gui, Add, Button, x350 y175 w75 h30 , ProcestList
-	Gui, Add, Button, x350 y225 w75 h30 , Actual Sweep
+	Gui, Add, Button, x350 y225 w75 h30 , Actual Swap
 
 	;; 5 col x450
+
+	Gui, Add, Text, x470 y50 w35 h20 , Get the
+	Gui, Add, Button, x450 y75 w75 h30 , Win_Res
+	Gui, Add, Button, x450 y125 w75 h30 , Scr_Res
+	Gui, Add, Button, x450 y175 w75 h30 , Scr_Wrk
+
+	;; 6 col x550
+
 	Gui, Add, Text, x570 y50 w35 h20 , Options
 	Gui, Add, Button, x550 y75 w75 h30 , LogoIcon
 	Gui, Add, Button, x550 y125 w75 h30 , Secret
 	Gui, Add, Button, x550 y175 w75 h30 , Author
 	Gui, Add, Button, x550 y225 w75 h30 , Icon_Viewer
 	Gui, Add, Button, x550 y275 w75 h30 , ReLoad
-
-	;; 6 col x550
-
-	Gui, Add, Text, x470 y50 w35 h20 , Get the
-	Gui, Add, Button, x450 y75 w75 h30 , Win_Res
-	Gui, Add, Button, x450 y125 w75 h30 , Scr_Res
-	Gui, Add, Button, x450 y175 w75 h30 , Scr_Wrk
 
 	Gui, Show, h320 w650, %title% %mode%
 	Return
@@ -432,7 +433,7 @@ ButtonProcestList:
 	Run, processlist.dll
 	Goto, start
 
-ButtonActualSweep:
+ButtonActualSwap:
 	Run, actualswap.dll
 	Goto, start
 
