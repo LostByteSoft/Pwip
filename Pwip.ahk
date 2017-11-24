@@ -18,80 +18,84 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-11-15-1506
+	SetEnv, version, Version 2017-11-24-1240
 	SetEnv, Author, LostByteSoft
-	SetEnv, logoicon, Ico_Windows.ico
+	SetEnv, icofolder, C:\Program Files\Common Files
+	SetEnv, logoicon, ico_Windows.ico
 
 	SysGet, MonitorCount, MonitorCount
 	SysGet, MonitorPrimary, MonitorPrimary
 	SysGet, Mon1, Monitor, 1
 	SysGet, Mon2, Monitor, 2
 
-	FileInstall, ico_Windows.ico, ico_Windows.ico, 0
-	FileInstall, ico_about.ico, ico_about.ico, 0
-	FileInstall, ico_lock.ico, ico_lock.ico, 0
-	FileInstall, ico_options.ico, ico_options.ico, 0
-	FileInstall, ico_reboot.ico, ico_reboot.ico, 0
-	FileInstall, ico_shut.ico, ico_shut.ico, 0
-	FileInstall, ico_debug.ico, ico_debug.ico, 0
-	FileInstall, ico_pause.ico, ico_pause.ico, 0
-	;; FileInstall, Ico_common.dll, Ico_common.dll, 0			; Space wasted.
+	;; specific files
+
+	FileInstall, ico_Windows.ico, %icofolder%\ico_Windows.ico, 0
+
+	;; Common ico
+
+	FileInstall, ico_about.ico, %icofolder%\ico_about.ico, 0
+	FileInstall, ico_lock.ico, %icofolder%\ico_lock.ico, 0
+	FileInstall, ico_shut.ico, %icofolder%\ico_shut.ico, 0
+	FileInstall, ico_options.ico, %icofolder%\ico_options.ico, 0
+	FileInstall, ico_reboot.ico, %icofolder%\ico_reboot.ico, 0
+	FileInstall, ico_shut.ico, %icofolder%\ico_shut.ico, 0
+	FileInstall, ico_debug.ico, %icofolder%\ico_debug.ico, 0
+	FileInstall, ico_HotKeys.ico, %icofolder%\ico_HotKeys.ico, 0
 
 ;;--- Menu Tray options ---
 
 	Menu, Tray, NoStandard
 	Menu, tray, add, ---=== %title% ===---, about
-	Menu, Tray, Icon, ---=== %title% ===---, %logoicon%
+	Menu, Tray, Icon, ---=== %title% ===---, %icofolder%\%logoicon%
 	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
-	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
+	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
 	Menu, tray, add, About && ReadMe, author
-	Menu, Tray, Icon, About && ReadMe, ico_about.ico
+	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
 	Menu, tray, add, Author %author%, about
 	menu, tray, disable, Author %author%
 	Menu, tray, add, %version%, about
 	menu, tray, disable, %version%
 	Menu, tray, add,
 	Menu, tray, add, --== Control ==--, about
-	Menu, Tray, Icon, --== Control ==--, ico_options.ico
+	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
 	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
-	Menu, Tray, Icon, Exit %title%, ico_shut.ico
+	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
 	Menu, tray, add, Refresh (ini mod), doReload 				; Reload the script.
-	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico
+	Menu, Tray, Icon, Refresh (ini mod), %icofolder%\ico_reboot.ico
 	Menu, tray, add, Set Debug (Toggle), debug
-	Menu, Tray, Icon, Set Debug (Toggle), ico_debug.ico
+	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
 	Menu, tray, add, Pause (Toggle), pause
-	Menu, Tray, Icon, Pause (Toggle), ico_pause.ico
+	Menu, Tray, Icon, Pause (Toggle), %icofolder%\ico_pause.ico
 	Menu, tray, add,
 	Menu, tray, add, --== Options ==--, about
-	Menu, Tray, Icon, --== Options ==--, ico_options.ico
+	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
 	menu, tray, add
 	menu, tray, add, Get the Win Resolution, ShowWinRes
 	menu, tray, add, Get the Scr Resolution, ShowScrRes
 	menu, tray, add, Get the Work Resolution, ShowWorkArea
 	menu, tray, add
 	menu, tray, add, Show Gui, start
-	Menu, Tray, Icon, Show Gui, %logoicon%
+	Menu, Tray, Icon, Show Gui, %icofolder%\%logoicon%
 	menu, tray, add,
 	Menu, Tray, Tip, %mode%
 
 ;;--- Software start here ---
 
-	TrayTip, %title%, %title% L win + Z, 2, 1
+	;;TrayTip, %title%, %title% L win + Z, 2, 1
 
 	goto, sleep2
 
 <#Z::
 start:
-	Menu, Tray, Icon, %Ico_common%,8
 	Gui, destroy
+	Menu, Tray, Icon, %icofolder%\%logoicon%
 	IfEqual, reimage, 1, SetEnv, checked, checked
 
 	;; Top lines
 	Gui, Add, Text, x25 y5 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
-
 	Gui, Add, Checkbox, x25 y20 w125 h20 vReImage %checked%, Do not close GUI.
-
 	Gui, Add, Text, x200 y20 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
 	IfEqual, MonitorCOunt, 1, goto, 1monitor
 	Gui, Add, Text, x200 y33 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
@@ -274,40 +278,6 @@ ButtonFitToScreen:
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
-ButtonIcon_Viewer:
-	;; This is a developpement version for an DLL file icons library. This is not really implemented.
-	SetEnv, icons, 1
-	;;GuiControlGet, ReImage,, Reimage
-	;;IfEqual, reimage, 0, Gui, destroy
-	Gui, destroy
-	nexticon2:
-	Ico_common := A_ScriptDir . "\Ico_common.dll"					; Icon path
-	Gui, Font, s10
-	Gui, Add, Text, x275 y10 cBlack, A_ScriptDirr=%A_ScriptDir%
-	Gui, Add, Text, x357 y25 cBlack, Icons Number=%Icons% 
-	Gui, Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %Ico_common%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
-	Gui, Font, s14
-	Gui, Add, Button, x5 y5 w75 , Next
-	Gui, Add, Button, x90 y5 w75 , Tray
-	Gui, Add, Button, x175 y5 w75 , Menu
-	Gui, Add, Picture, Icon50, "%A_ScriptDir%"\Ico_common.dll
-	Gui, Show, , %title% Logo
-	Gui, Color, add8e6		; Hex color light blue
-	SetEnv, fromlogo, 1
-	Return
-
-	ButtonNext:
-		IfEqual, icons, 8, goto, start
-		EnvAdd, icons, 1
-		Goto, nexticon2
-
-	ButtonTray:
-		Menu, Tray, Icon, %Ico_common%,%icons%
-		Goto, nexticon2
-
-	ButtonMenu:
-		Goto, start
-
 Button1/2L:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, reimage, 0, Gui, destroy
@@ -384,6 +354,40 @@ ButtonScr_Wrk:
 		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 : %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom% - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
 		goto, sleep2
 
+ButtonIcon_Viewer:
+	;; This is a developpement version for an DLL file icons library. This is not really implemented.
+	SetEnv, icons, 1
+	;;GuiControlGet, ReImage,, Reimage
+	;;IfEqual, reimage, 0, Gui, destroy
+	Gui, destroy
+	nexticon2:
+	SharedIcons := A_ScriptDir . "\SharedIcons.dll"		; Icon path
+	Gui, Font, s10
+	Gui, Add, Text, x275 y10 cBlack, ScriptDir=%A_ScriptDir%
+	Gui, Add, Text, x357 y25 cBlack, Icon Number=%Icons% 
+	Gui, Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %SharedIcons%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
+	Gui, Font, s14
+	Gui, Add, Button, x5 y5 w75 , Next
+	Gui, Add, Button, x90 y5 w75 , Tray
+	Gui, Add, Button, x175 y5 w75 , Menu
+	Gui, Add, Picture, Icon50, %A_ScriptDir%\SharedIcons.dll,%icons%
+	Gui, Show, , %title% Logo
+	Gui, Color, add8e6		; Hex color light blue
+	SetEnv, fromlogo, 1
+	Return
+
+	ButtonNext:
+		IfEqual, icons, 7, goto, start
+		EnvAdd, icons, 1
+		Goto, nexticon2
+
+	ButtonTray:
+		Menu, Tray, Icon, SharedIcons.dll, %icons%
+		Goto, nexticon2
+
+	ButtonMenu:
+		Goto, start
+
 ;;--- Debug Pause ---
 
 debug:
@@ -414,7 +418,7 @@ pause:
 	Goto, start
 
 	sleep:
-	Menu, Tray, Icon, ico_pause.ico
+	Menu, Tray, Icon, %icofolder%\ico_pause.ico
 	sleep2:
 	sleep, 500000
 	goto, sleep2
@@ -455,12 +459,8 @@ ExitApp:
 
 GuiClose:
 	Gui, destroy
-	IfEqual, fromlogo, 1, Goto, start
+	;;IfEqual, fromlogo, 1, Goto, start
 	Goto, sleep2
-
-;	Escape::		; Debug purpose, cause some bizzare thing if always activated.
-	Gui, destroy
-	ExitApp
 
 ;;--- Tray Bar (must be at end of file) ---
 
@@ -481,22 +481,24 @@ version:
 
 ButtonAuthor:
 	author:
-		MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to place automaticly a windows in a specified resolutionand use as a developpement tool for AHK. Usefull for windows doesn't have the ability to do this.`n`n`tGo to https://github.com/LostByteSoft
-		Return
+	MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to place automaticly a windows in a specified resolutionand use as a developpement tool for AHK. Usefull for windows doesn't have the ability to do this.`n`n`tGo to https://github.com/LostByteSoft
+	Return
 
 ButtonLogoIcon:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, reimage, 0, Gui, destroy
 
+;;;	%icofolder%\SharedIcons.dll := A_ScriptDir . "\%icofolder%\SharedIcons.dll"
+;;;	Gui, 4:Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %icofolder%\SharedIcons.dll
+
 GuiLogo:
-	Ico_common := A_ScriptDir . "\Ico_common.dll"
-	Gui, 4:Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %Ico_common%
+	Gui, 4:Add, Picture, x25 y25 w400 h400, %icofolder%\%logoicon%
 	Gui, 4:Show, w450 h450, %title% Logo
-	Gui, 4:Color, 000000
+	;;Gui, 4:Color, 000000
 	Sleep, 500
 	Return
 
-4GuiClose:
+	4GuiClose:
 	Gui 4:Cancel
 	return
 

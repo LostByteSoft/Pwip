@@ -18,7 +18,7 @@
 
 	SetEnv, title, ActualSwap
 	SetEnv, mode, Get the actual size of the page file.
-	SetEnv, version, Version 2017-11-20-1536
+	SetEnv, version, Version 2017-11-24-1258
 	SetEnv, Author, LostByteSoft
 	SetEnv, logoicon, ico_options.ico
 	SetEnv, debug, 0
@@ -74,25 +74,22 @@ Start:
 change:
 	InputBox, NewSwapSize, %title%, Insert new value size in MB. It will be c:\YourNewSize.swap !!! Only numbers !!! Exemple: 1024 or 2048 or 4096 or 8192
 	IfEqual, debug, 1, MsgBox, CHANGE :`n`nNewSwapSize=%NewSwapSize%
-
+	if ErrorLevel
+		Goto, ExitApp
 	IfEqual, NewSwapSize,, SetEnv, NewSwapSize, Disabled
-
 	RegRead, TestKey2, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management ,PagingFiles
-	MsgBox, 4, %title%, Old value = %TestKey2% : New value = %NewSwapSize% MB.`n`n`t(NO changes is made at this time) Click YES to reboot and take change.`n`nReboot now ?
-
+	MsgBox, 4, %title%, Old value = %TestKey2% : New value = %NewSwapSize% MB.`n`n`t(NO changes is made at this time) Click YES to make change.
 	IfMsgBox, Yes, Goto, changevalue
+	IfMsgBox, NO, Goto, ExitApp
 
 changevalue:
 
 	IfEqual, NewSwapSize, Disabled, SetEnv, NewSwapSize,
-
-	IfEqual, debug, 1, MsgBox, CHANGEVALUE :`n`n NewSwapSize=%NewSwapSize%`n`n Writen data t:\pagefile.sys %NewSwapSize% %NewSwapSize%
-
-	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, t:\pagefile.sys %NewSwapSize% %NewSwapSize%
-
-	MsgBox, 0, %title%, Changes where made. Reboot to take effect. Click OK will reboot.
-
-	Goto, reboot
+	IfEqual, debug, 1, MsgBox, CHANGEVALUE :`n`n NewSwapSize=%NewSwapSize%`n`n Writen data C:\pagefile.sys %NewSwapSize% %NewSwapSize%
+	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, C:\pagefile.sys %NewSwapSize% %NewSwapSize%
+	MsgBox, 1, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. Cancel apply changes but not reboot.
+	IfMsgBox, Yes, Goto, reboot
+	IfMsgBox, CANCEL, Goto, ExitApp
 
 ;;--- Debug Pause ---
 
@@ -133,21 +130,17 @@ pause:
 
 ButtonQuit:
 	Gui, destroy
-	goto, sleep2
+	goto, ExitApp
 
 doReload:
 	Gui, destroy
 	Reload
 	sleep, 500
 
+ESCAPE::
 ExitApp:
 	Gui, destroy
 	ExitApp
-
-GuiClose:
-	Gui, destroy
-	IfEqual, fromlogo, 1, Goto, start
-	Goto, sleep2
 
 reboot:
 	Shutdown, 6
