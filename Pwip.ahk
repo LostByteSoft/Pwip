@@ -36,12 +36,12 @@
 
 	FileInstall, ico_about.ico, %icofolder%\ico_about.ico, 0
 	FileInstall, ico_lock.ico, %icofolder%\ico_lock.ico, 0
-	FileInstall, ico_shut.ico, %icofolder%\ico_shut.ico, 0
 	FileInstall, ico_options.ico, %icofolder%\ico_options.ico, 0
 	FileInstall, ico_reboot.ico, %icofolder%\ico_reboot.ico, 0
 	FileInstall, ico_shut.ico, %icofolder%\ico_shut.ico, 0
 	FileInstall, ico_debug.ico, %icofolder%\ico_debug.ico, 0
 	FileInstall, ico_HotKeys.ico, %icofolder%\ico_HotKeys.ico, 0
+	FileInstall, ico_pause.ico, %icofolder%\ico_pause.ico, 0
 
 ;;--- Menu Tray options ---
 
@@ -84,6 +84,8 @@
 ;;--- Software start here ---
 
 	;;TrayTip, %title%, %title% L win + Z, 2, 1
+
+	IfNotExist, SharedIcons.dll, MsgBox, All dll files must be in same folder of Pwip.exe
 
 	goto, sleep2
 
@@ -377,7 +379,7 @@ ButtonIcon_Viewer:
 	Return
 
 	ButtonNext:
-		IfEqual, icons, 7, goto, start
+		IfEqual, icons, 8, goto, start
 		EnvAdd, icons, 1
 		Goto, nexticon2
 
@@ -426,18 +428,22 @@ pause:
 ;;--- Function Exe Call ---
 
 ButtonWindowInfo:
+	IfNotExist, ActiveWindowInfo.dll, MsgBox, All dll files must be in same folder of Pwip.exe
 	Run, ActiveWindowInfo.dll
 	Goto, start
 
 ButtonHddTemp:
+	IfNotExist, HddTemp.dll, MsgBox, All dll files must be in same folder of Pwip.exe
 	Run, HddTemp.dll
 	Goto, start
 
 ButtonProcestList:
+	IfNotExist, processlist.dll, MsgBox, All dll files must be in same folder of Pwip.exe
 	Run, processlist.dll
 	Goto, start
 
 ButtonActualSwap:
+	IfNotExist, actualswap.dll, MsgBox, All dll files must be in same folder of Pwip.exe
 	Run, actualswap.dll
 	Goto, start
 
