@@ -5,7 +5,7 @@
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 ;;	Use as a developpement tool for AHK
 ;;	This entire thing (work) is a developpement tool for AHK scripting.
-;;	Use an external DLL file for icon is shit load of job and the final quality is less.
+;;	Use an external EXE or DLL file for icon is shit load of job and the final quality is less.
 
 ;;--- Softwares Variables ---
 
@@ -18,7 +18,7 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-11-24-1240
+	SetEnv, version, Version 2017-12-02-1324
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files
 	SetEnv, logoicon, ico_Windows.ico
@@ -84,8 +84,6 @@
 ;;--- Software start here ---
 
 	;;TrayTip, %title%, %title% L win + Z, 2, 1
-
-	IfNotExist, SharedIcons.dll, MsgBox, All dll files must be in same folder of Pwip.exe
 
 	goto, sleep2
 
@@ -363,7 +361,9 @@ ButtonIcon_Viewer:
 	;;IfEqual, reimage, 0, Gui, destroy
 	Gui, destroy
 	nexticon2:
-	SharedIcons := A_ScriptDir . "\SharedIcons.dll"		; Icon path
+
+	SharedIcons :=  "C:\Program Files\Common Files\SharedIcons.dll"		; Icon path
+
 	Gui, Font, s10
 	Gui, Add, Text, x275 y10 cBlack, ScriptDir=%A_ScriptDir%
 	Gui, Add, Text, x357 y25 cBlack, Icon Number=%Icons% 
@@ -379,7 +379,7 @@ ButtonIcon_Viewer:
 	Return
 
 	ButtonNext:
-		IfEqual, icons, 8, goto, start
+		IfEqual, icons, 10, goto, start
 		EnvAdd, icons, 1
 		Goto, nexticon2
 
@@ -428,23 +428,23 @@ pause:
 ;;--- Function Exe Call ---
 
 ButtonWindowInfo:
-	IfNotExist, ActiveWindowInfo.dll, MsgBox, All dll files must be in same folder of Pwip.exe
-	Run, ActiveWindowInfo.dll
+	IfNotExist, ActiveWindowInfo.exe, MsgBox, All exe files must be in same folder of Pwip.exe
+	Run, ActiveWindowInfo.exe
 	Goto, start
 
 ButtonHddTemp:
-	IfNotExist, HddTemp.dll, MsgBox, All dll files must be in same folder of Pwip.exe
-	Run, HddTemp.dll
+	IfNotExist, HddTemp.exe, MsgBox, All exe files must be in same folder of Pwip.exe
+	Run, HddTemp.exe
 	Goto, start
 
 ButtonProcestList:
-	IfNotExist, processlist.dll, MsgBox, All dll files must be in same folder of Pwip.exe
-	Run, processlist.dll
+	IfNotExist, processlist.exe, MsgBox, All exe files must be in same folder of Pwip.exe
+	Run, processlist.exe
 	Goto, start
 
 ButtonActualSwap:
-	IfNotExist, actualswap.dll, MsgBox, All dll files must be in same folder of Pwip.exe
-	Run, actualswap.dll
+	IfNotExist, actualswap.exe, MsgBox, exe dll files must be in same folder of Pwip.exe
+	Run, actualswap.exe
 	Goto, start
 
 ;;--- Quit (escape , esc) ---
