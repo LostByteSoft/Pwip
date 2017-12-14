@@ -18,10 +18,11 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-12-02-1324
+	SetEnv, version, Version 2017-12-14-0837
 	SetEnv, Author, LostByteSoft
-	SetEnv, icofolder, C:\Program Files\Common Files
+	SetEnv, icofolder, C:\Program Files\Common Files\
 	SetEnv, logoicon, ico_Windows.ico
+	SetEnv, debug, 0
 
 	SysGet, MonitorCount, MonitorCount
 	SysGet, MonitorPrimary, MonitorPrimary
@@ -342,6 +343,8 @@ ButtonScr_Res:
 
 ShowWorkArea:
 ButtonScr_Wrk:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	SysGet, Mon1, MonitorWorkArea, 1
 	IfEqual, MonitorCOunt, 2, goto, 2monitor
 	TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Data is in clipboard., 3, 2
@@ -428,22 +431,22 @@ pause:
 ;;--- Function Exe Call ---
 
 ButtonWindowInfo:
-	IfNotExist, ActiveWindowInfo.exe, MsgBox, All exe files must be in same folder of Pwip.exe
+	IfNotExist, ActiveWindowInfo.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, ActiveWindowInfo.exe
 	Goto, start
 
 ButtonHddTemp:
-	IfNotExist, HddTemp.exe, MsgBox, All exe files must be in same folder of Pwip.exe
+	IfNotExist, HddTemp.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, HddTemp.exe
 	Goto, start
 
 ButtonProcestList:
-	IfNotExist, processlist.exe, MsgBox, All exe files must be in same folder of Pwip.exe
+	IfNotExist, processlist.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, processlist.exe
 	Goto, start
 
 ButtonActualSwap:
-	IfNotExist, actualswap.exe, MsgBox, exe dll files must be in same folder of Pwip.exe
+	IfNotExist, actualswap.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, actualswap.exe
 	Goto, start
 
