@@ -17,8 +17,8 @@
 	SetTitleMatchMode, 2
 
 	SetEnv, title, Pwip
-	SetEnv, mode, Put Windows In Place. AHK developpement tool.
-	SetEnv, version, Version 2017-12-14-0837
+	SetEnv, mode, Put Windows In Place. Left click here !
+	SetEnv, version, Version 2018-01-21-1044
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files\
 	SetEnv, logoicon, ico_Windows.ico
@@ -73,9 +73,10 @@
 	Menu, tray, add, --== Options ==--, about
 	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
 	menu, tray, add
-	menu, tray, add, Get the Win Resolution, ShowWinRes
-	menu, tray, add, Get the Scr Resolution, ShowScrRes
-	menu, tray, add, Get the Work Resolution, ShowWorkArea
+	menu, tray, add, Get the Win Resolution, ButtonWinRes
+	menu, tray, add, Get the Scr Resolution, ButtonScrRes
+	menu, tray, add, Get the Work Resolution, ButtonScrWrk
+	menu, tray, add, Get the Sys Uptime, ButtonGetUptime
 	menu, tray, add
 	menu, tray, add, Show Gui, start
 	Menu, Tray, Icon, Show Gui, %icofolder%\%logoicon%
@@ -84,9 +85,7 @@
 
 ;;--- Software start here ---
 
-	;;TrayTip, %title%, %title% L win + Z, 2, 1
-
-	goto, sleep2
+	Goto, sleep2
 
 <#Z::
 start:
@@ -140,8 +139,9 @@ start:
 
 	Gui, Add, Text, x470 y50 w35 h20 , Get the
 	Gui, Add, Button, x450 y75 w75 h30 , Win_Res
-	Gui, Add, Button, x450 y125 w75 h30 , Scr_Res
-	Gui, Add, Button, x450 y175 w75 h30 , Scr_Wrk
+	Gui, Add, Button, x450 y125 w75 h30 , Scr Res
+	Gui, Add, Button, x450 y175 w75 h30 , Scr Wrk
+	Gui, Add, Button, x450 y225 w75 h30 , Get Uptime
 
 	;; 6 col x550
 
@@ -309,8 +309,7 @@ Button1/2R:
 	WinActivate, %activeWindow%
 	Goto, sleep2
 
-ShowWinRes:
-ButtonWin_Res:
+ButtonWinRes:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, reimage, 0, Gui, destroy
 	TrayTip, %title%, Click on a Windows with left mouse button !, 1, 2
@@ -323,8 +322,7 @@ ButtonWin_Res:
 	clipboard = %WinTitle% is at x=%x% y=%y% w=%width% h=%height% : %WinTitle% %x% %y% %width% %height%
 	goto, sleep2
 
-ShowScrRes:
-ButtonScr_Res:
+ButtonScrRes:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, reimage, 0, Gui, destroy
 	SysGet, MonitorCount, MonitorCount
@@ -341,8 +339,7 @@ ButtonScr_Res:
 		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
 		goto, sleep2
 
-ShowWorkArea:
-ButtonScr_Wrk:
+ButtonScrWrk:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, reimage, 0, Gui, destroy
 	SysGet, Mon1, MonitorWorkArea, 1
@@ -356,6 +353,30 @@ ButtonScr_Wrk:
 		TrayTip, %title%, MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 : %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom% - Data is in clipboard., 3, 2
 		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 : %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom% - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
 		goto, sleep2
+
+ButtonGetUptime:
+	Gui, destroy
+
+	;; 1000 = 1 sec
+	;; 60000 = 1 min
+	;; 3 600 000 = 1 hour
+	;; 86400000 = 24 hour
+	;; 2147483647 = 24 days ; maximum
+
+	t_TimeFormat := "HH:mm:ss dddd"
+	t_StartTime :=                          		; Clear variable = A_Now
+	t_UpTime := A_TickCount // 1000				; Elapsed seconds since start
+	t_StartTime += -t_UpTime, Seconds       		; Same as EnvAdd with empty time
+	FormatTime t_NowTime, , %t_TimeFormat%  		; Empty time = A_Now
+	FormatTime t_StartTime, %t_StartTime%, %t_TimeFormat%
+	t_UpTime := % t_UpTime // 86400 " days " mod(t_UpTime // 3600, 24) ":" mod(t_UpTime // 60, 60) ":" mod(t_UpTime, 60)
+
+	IfEqual, debug, 1, msgbox, a_dd=%a_dd% a_hour=%a_hour%
+
+	MsgBox, 64, Get Uptime (Time out 10 sec(NO)), Start time: `t" %t_StartTime% "`nTime now:`t" %t_NowTime% "`n`nElapsed time:`t" %t_UpTime% "`n`n(Time out 10 sec), 10
+		if ErrorLevel
+			goto, sleep2
+	goto, sleep2
 
 ButtonIcon_Viewer:
 	;; This is a developpement version for an DLL file icons library. This is not really implemented.
@@ -378,7 +399,6 @@ ButtonIcon_Viewer:
 	Gui, Add, Picture, Icon50, %A_ScriptDir%\SharedIcons.dll,%icons%
 	Gui, Show, , %title% Logo
 	Gui, Color, add8e6		; Hex color light blue
-	SetEnv, fromlogo, 1
 	Return
 
 	ButtonNext:
