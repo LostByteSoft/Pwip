@@ -91,22 +91,22 @@ Start:
 
 	Gui, Add, Text, x200 y20 w300 h20 , Change value ?
 
-
+	Gui, Add, Text, x70 y50 w50 h20 , Change ?
 	Gui, Add, Button, x50 y75 w75 h40 , Yes
 	Gui, Add, Button, x50 y125 w75 h40 , No
 	Gui, Add, Button, x50 y175 w75 h40 , Disable
 
 
-	Gui, Add, Text, x170 y50 w35 h20 , Preset
+	Gui, Add, Text, x170 y50 w50 h20 , Preset ?
 	Gui, Add, Button, x150 y75 w75 h40 , Preset_4095
 	Gui, Add, Button, x150 y125 w75 h40 , Preset_8192
 	Gui, Add, Button, x150 y175 w75 h40 , Preset_12gb (ram+swap)
 	Gui, Add, Text, x50 y225 w550 h20, Preset_12gb (ram+swap) : It will take the ram capacity and add swap to go to 12 gb.
 
-	Gui, Add, Text, x270 y50 w35 h20 , Read
+	Gui, Add, Text, x270 y50 w50 h20 , Read ?
 	Gui, Add, Button, x250 y75 w75 h40 , Read
 
-	Gui, Add, Text, x570 y50 w35 h20 , Options
+	Gui, Add, Text, x570 y50 w50 h20 , Options !
 	Gui, Add, Button, x550 y75 w75 h40 , LogoIcon
 	Gui, Add, Button, x550 y125 w75 h40 , Secret
 	Gui, Add, Button, x550 y175 w75 h40 , Author
@@ -119,7 +119,7 @@ Start:
 ButtonRead:
 	;;RegRead, NewTestKey1, REG_SZ, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles
 	RegRead, NewTestKey1, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles
-	IfEqual, NewTestKey1,, SetEnv, NewTestKey, Disabled
+	IfEqual, NewTestKey1,, SetEnv, NewTestKey1, Disabled
 	MsgBox, NewTestKey (or swap value) = %NewTestKey1%
 	Goto, Start
 
