@@ -18,7 +18,7 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. Left click here !
-	SetEnv, version, Version 2018-01-21-1044
+	SetEnv, version, Version 2018-02-22-1249
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files\
 	SetEnv, logoicon, ico_Windows.ico
@@ -29,7 +29,7 @@
 	SysGet, Mon1, Monitor, 1
 	SysGet, Mon2, Monitor, 2
 
-	;; specific files
+	;; Specific Icons (or files)
 
 	FileInstall, ico_Windows.ico, %icofolder%\ico_Windows.ico, 0
 
@@ -75,19 +75,19 @@
 	menu, tray, add
 	menu, tray, add, Get the Win Resolution, ButtonWinRes
 	menu, tray, add, Get the Scr Resolution, ButtonScrRes
-	menu, tray, add, Get the Work Resolution, ButtonScrWrk
-	menu, tray, add, Get the Sys Uptime, ButtonGetUptime
+	menu, tray, add, Get the Work Resolution, ButtonScrWork
+	menu, tray, add, Get the Sys Uptime, ButtonUptime
 	menu, tray, add
 	menu, tray, add, Show Gui, start
 	Menu, Tray, Icon, Show Gui, %icofolder%\%logoicon%
 	menu, tray, add,
-	Menu, Tray, Tip, %mode%
+	Menu, Tray, Tip, %mode% Win + Z
 
 ;;--- Software start here ---
 
 	Goto, sleep2
 
-<#Z::
+#Z::
 start:
 	Gui, destroy
 	Menu, Tray, Icon, %icofolder%\%logoicon%
@@ -95,7 +95,10 @@ start:
 
 	;; Top lines
 	Gui, Add, Text, x25 y5 w550 h40 , Click on a resolution you want AND click on a windows you want to be resize. MonitorCount=%MonitorCount% MonitorPrimary=%MonitorPrimary%
-	Gui, Add, Checkbox, x25 y20 w125 h20 vReImage %checked%, Do not close GUI.
+
+	Gui, Add, Checkbox, x25 y20 w125 h15 vReImage %checked%, Do not close GUI.
+	;Gui, Add, Checkbox, x25 y35 w175 h15 vMonitor2 %checked%, Open second monitor GUI
+
 	Gui, Add, Text, x200 y20 w300 h20 , Screen 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%
 	IfEqual, MonitorCOunt, 1, goto, 1monitor
 	Gui, Add, Text, x200 y33 w300 h20 , Screen 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%
@@ -104,7 +107,7 @@ start:
 	Gui, Add, Text, x200 y33 w300 h20 , Screen 2 is not installed.
 	2monitors:
 
-	;; 1 col
+	;; 1 col x50
 	Gui, Add, Text, x70 y50 w35 h20 , 4 / 3
 	Gui, Add, Button, x50 y75 w75 h30 , 640x480
 	Gui, Add, Button, x50 y125 w75 h30 , 800x600
@@ -112,7 +115,7 @@ start:
 	Gui, Add, Button, x50 y225 w75 h30 , 1152x864
 	Gui, Add, Button, x50 y275 w75 h30 , 1600x1200
 
-	;; 2 col
+	;; 2 col x150
 	Gui, Add, Text, x170 y50 w35 h20 , 16 / 9
 	Gui, Add, Button, x150 y75 w75 h30 , 1280x720
 	Gui, Add, Button, x150 y125 w75 h30 , 1360x768
@@ -120,15 +123,16 @@ start:
 	Gui, Add, Button, x150 y225 w75 h30 , 1600x900
 	Gui, Add, Button, x150 y275 w75 h30 , 1920x1080
 
-	;; 3 col
+	;; 3 col x2«50
 	Gui, Add, Text, x270 y50 w35 h20 , 16 / 10
 	Gui, Add, Button, x250 y75 w75 h30 , 1680x1050
-	Gui, Add, Text, x275 y160 w40 h20 , Vary
+	Gui, Add, Text, x275 y107 w40 h20 , Vary
 	Gui, Add, Button, x250 y175 w38 h30 , 1/2 L
 	Gui, Add, Button, x287 y175 w38 h30 , 1/2 R
 	Gui, Add, Button, x250 y225 w75 h30 , FitToScreen
+	Gui, Add, Button, x250 y275 w75 h30 , Icon Viewer
 
-	;; 4 col
+	;; 4 col x350
 	Gui, Add, Text, x370 y50 w50 h20 , Exe call
 	Gui, Add, Button, x350 y75 w75 h30 , HddTemp
 	Gui, Add, Button, x350 y125 w75 h30 , WindowInfo
@@ -136,24 +140,26 @@ start:
 	Gui, Add, Button, x350 y225 w75 h30 , Actual Swap
 
 	;; 5 col x450
-
 	Gui, Add, Text, x470 y50 w35 h20 , Get the
-	Gui, Add, Button, x450 y75 w75 h30 , Win_Res
+	Gui, Add, Button, x450 y75 w75 h30 , Win Res
 	Gui, Add, Button, x450 y125 w75 h30 , Scr Res
-	Gui, Add, Button, x450 y175 w75 h30 , Scr Wrk
-	Gui, Add, Button, x450 y225 w75 h30 , Get Uptime
+	Gui, Add, Button, x450 y175 w75 h30 , Scr Work
+	Gui, Add, Button, x450 y225 w75 h30 , Uptime
 
 	;; 6 col x550
-
 	Gui, Add, Text, x570 y50 w35 h20 , Options
 	Gui, Add, Button, x550 y75 w75 h30 , LogoIcon
 	Gui, Add, Button, x550 y125 w75 h30 , Secret
 	Gui, Add, Button, x550 y175 w75 h30 , Author
-	Gui, Add, Button, x550 y225 w75 h30 , Icon_Viewer
+	Gui, Add, Button, x550 y225 w75 h30 , Exit
 	Gui, Add, Button, x550 y275 w75 h30 , ReLoad
 
 	Gui, Show, h320 w650, %title% %mode%
+
+	;;IfEqual, vMonitor2, checked, add, Text, x250 y300 w35 h20 , CHECKED MONITOR GUI
 	Return
+
+	Goto, start
 
 ;;--- Resolutions ---
 
@@ -339,7 +345,7 @@ ButtonScrRes:
 		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%. - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom% %Mon2Left% %Mon2Top% %Mon2Right% %Mon2Bottom%
 		goto, sleep2
 
-ButtonScrWrk:
+ButtonScrWork:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, reimage, 0, Gui, destroy
 	SysGet, Mon1, MonitorWorkArea, 1
@@ -354,8 +360,9 @@ ButtonScrWrk:
 		clipboard = MonitorCount=%Monitorcount% MonitorPrimary=%MonitorPrimary% - Mon 1 : %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom% - Mon 2 : %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom% - %Monitorcount% %MonitorPrimary% %Mon1Left% %Mon1Top% %Mon1Right% %Mon1Bottom%
 		goto, sleep2
 
-ButtonGetUptime:
-	Gui, destroy
+ButtonUptime:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 
 	;; 1000 = 1 sec
 	;; 60000 = 1 min
@@ -378,12 +385,12 @@ ButtonGetUptime:
 			goto, sleep2
 	goto, sleep2
 
-ButtonIcon_Viewer:
+ButtonIconViewer:
 	;; This is a developpement version for an DLL file icons library. This is not really implemented.
 	SetEnv, icons, 1
 	;;GuiControlGet, ReImage,, Reimage
-	;;IfEqual, reimage, 0, Gui, destroy
 	Gui, destroy
+
 	nexticon2:
 
 	SharedIcons :=  "C:\Program Files\Common Files\SharedIcons.dll"		; Icon path
@@ -411,6 +418,7 @@ ButtonIcon_Viewer:
 		Goto, nexticon2
 
 	ButtonMenu:
+		Gui, destroy
 		Goto, start
 
 ;;--- Debug Pause ---
@@ -451,26 +459,35 @@ pause:
 ;;--- Function Exe Call ---
 
 ButtonWindowInfo:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	IfNotExist, ActiveWindowInfo.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, ActiveWindowInfo.exe
 	Goto, start
 
 ButtonHddTemp:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	IfNotExist, HddTemp.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, HddTemp.exe
 	Goto, start
 
 ButtonProcestList:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	IfNotExist, processlist.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, processlist.exe
 	Goto, start
 
 ButtonActualSwap:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
 	IfNotExist, actualswap.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, actualswap.exe
 	Goto, start
 
 ;;--- Quit (escape , esc) ---
+
 
 ButtonQuit:
 	Gui, destroy
@@ -482,6 +499,7 @@ doReload:
 	Reload
 	sleep, 500
 
+ButtonExit:
 ExitApp:
 	Gui, destroy
 	ExitApp
