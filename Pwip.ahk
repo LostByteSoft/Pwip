@@ -389,6 +389,9 @@ ButtonIconViewer:
 	;; This is a developpement version for an DLL file icons library. This is not really implemented.
 	SetEnv, icons, 1
 	;;GuiControlGet, ReImage,, Reimage
+
+	IfNotExist, "C:\Program Files\Common Files\SharedIcons.dll", goto, start
+
 	Gui, destroy
 
 	nexticon2:
@@ -460,30 +463,34 @@ pause:
 
 ButtonWindowInfo:
 	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
+	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, ActiveWindowInfo.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, ActiveWindowInfo.exe
+	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
 ButtonHddTemp:
 	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
+	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, HddTemp.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, HddTemp.exe
+	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
 ButtonProcestList:
 	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
+	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, processlist.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, processlist.exe
+	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
 ButtonActualSwap:
 	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
+	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, actualswap.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, actualswap.exe
+	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
 ;;--- Quit (escape , esc) ---
