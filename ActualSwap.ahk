@@ -18,7 +18,7 @@
 
 	SetEnv, title, ActualSwap
 	SetEnv, mode, Get the actual size of the page file.
-	SetEnv, version, Version 2018-02-24-1933
+	SetEnv, version, Version 2018-03-05-1948
 	SetEnv, Author, LostByteSoft
 	SetEnv, debug, 0
 	SetEnv, icofolder, C:\Program Files\Common Files
@@ -67,7 +67,11 @@
 	Menu, tray, add, --== Options ==--, about
 	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
 	menu, tray, add, Disable, ButtonDisable
+	Menu, Tray, add, Show GUI, start
 	menu, tray, add,
+	Menu, Tray, Default, Show GUI
+	menu, tray, add,
+	Menu, Tray, Click, 1
 	Menu, Tray, Tip, %mode%
 
 ;;--- Software start here (menu) ---
@@ -104,16 +108,16 @@ gui:
 	;; 2 col x150
 	Gui, Add, Text, x170 y50 w50 h20 , Preset ?
 	Gui, Add, Button, x150 y75 w75 h30 , Preset_2048
-	Gui, Add, Button, x150 y125 w75 h30 , Preset_4095
-	Gui, Add, Button, x150 y175 w75 h30 , Preset_6144
-	Gui, Add, Button, x150 y225 w75 h30 , Preset_8192
+	Gui, Add, Button, x150 y125 w75 h30 , Preset_4096
+	Gui, Add, Button, x150 y175 w75 h30 , Preset_8192
+	Gui, Add, Button, x150 y225 w75 h30 , Preset_16384
 
 	;; 3 col x250
 	Gui, Add, Text, x270 y50 w50 h20 , Total ?
 	Gui, Add, Button, x250 y75 w75 h30 , Total_4096
 	Gui, Add, Button, x250 y125 w75 h30 , Total_8192
-	Gui, Add, Button, x250 y175 w75 h30 , Total_12288
-	Gui, Add, Button, x250 y225 w75 h30 , Total_16384
+	Gui, Add, Button, x250 y175 w75 h30 , Total_16384
+	Gui, Add, Button, x250 y225 w75 h30 , Total_32768
 	Gui, Add, Text, x250 y275 w200 h50, Total is ram + swap. It will take the ram capacity and add swap to go to X mb.
 
 	;; 4 col
@@ -123,6 +127,7 @@ gui:
 	;; 5 col x450
 	;;Gui, Add, Text, x470 y50 w35 h20 ,
 	;;Gui, Add, Button, x450 y75 w75 h30 ,
+	Gui, Add, Button, x450 y275 w75 h30 , Reboot
 
 	;; 6 col x550
 	Gui, Add, Text, x570 y50 w50 h20 , Options !
@@ -160,41 +165,49 @@ change:
 
 ButtonDisable:
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles,
-	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot.
+	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. NewSwapSize=%NewSwapSize%
 	IfMsgBox, Yes, Goto, reboot
 	IfMsgBox, No, Goto, ExitApp
 
 ButtonPreset_2048:
 	SetEnv, NewSwapSize, C:\PagingFiles.swp 2048 2048
-	IfEqual, debug, 1, MsgBox, Total Physical Memory 12gb=%12gb% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
+	IfEqual, debug, 1, MsgBox, Total Physical Memory TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, %NewSwapSize%
-	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot.
+	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. NewSwapSize=%NewSwapSize%
 	IfMsgBox, Yes, Goto, reboot
 	IfMsgBox, NO, Goto, ExitApp
 	Goto, start
 
-ButtonPreset_4095:
+ButtonPreset_4096:
 	SetEnv, NewSwapSize, C:\PagingFiles.swp 4095 4095
-	IfEqual, debug, 1, MsgBox, Total Physical Memory 12gb=%12gb% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
+	IfEqual, debug, 1, MsgBox, Total Physical Memory TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, %NewSwapSize%
-	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot.
+	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. NewSwapSize=%NewSwapSize%
 	IfMsgBox, Yes, Goto, reboot
 	IfMsgBox, NO, Goto, ExitApp
 
 ButtonPreset_6144:
 	SetEnv, NewSwapSize, C:\PagingFiles.swp 6144 6144
-	IfEqual, debug, 1, MsgBox, Total Physical Memory 12gb=%12gb% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
+	IfEqual, debug, 1, MsgBox, Total Physical Memory TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, %NewSwapSize%
-	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot.
+	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. NewSwapSize=%NewSwapSize%
 	IfMsgBox, Yes, Goto, reboot
 	IfMsgBox, NO, Goto, ExitApp
 	Goto, start
 
 ButtonPreset_8192:
 	SetEnv, NewSwapSize, C:\PagingFiles.swp 8192 8192
-	IfEqual, debug, 1, MsgBox, Total Physical Memory 12gb=%12gb% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
+	IfEqual, debug, 1, MsgBox, Total Physical Memory TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, %NewSwapSize%
-	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot.
+	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. NewSwapSize=%NewSwapSize%
+	IfMsgBox, Yes, Goto, reboot
+	IfMsgBox, NO, Goto, ExitApp
+
+ButtonPreset_16384:
+	SetEnv, NewSwapSize, C:\PagingFiles.swp 16384 16384
+	IfEqual, debug, 1, MsgBox, Total Physical Memory TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
+	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, %NewSwapSize%
+	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. NewSwapSize=%NewSwapSize%
 	IfMsgBox, Yes, Goto, reboot
 	IfMsgBox, NO, Goto, ExitApp
 
@@ -218,8 +231,8 @@ ButtonTotal_4096:
 	SetEnv, NewSwapSize, %MaxTotal%
 	NewSwapSize2 := TotalPhys + NewSwapSize
 	NewSwapSize /= 1000000
-	IfEqual, debug, 1, goto, skipwrite3
 	MsgBox, 64, Total Physical Memory, TotalPhys = %TotalPhys% Bytes`n`nThe preset value set swap to 4 gb (ram + swap = 4 gb)`n`nNew swap value = %NewSwapSize% MB.
+	IfEqual, debug, 1, goto, skipwrite3
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, C:\pagefile.sys %NewSwapSize% %NewSwapSize%
 	skipwrite3:
 	MsgBox, 4, %title%, Changes where made (Not in debug). Reboot to take effect?  Click OK will reboot. No not reboot.
@@ -245,8 +258,8 @@ ButtonTotal_8192:
 	NewSwapSize2 := TotalPhys + NewSwapSize
 	NewSwapSize /= 1000000
 	MsgBox, MaxTotal=%MaxTotal% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%`n`nNewSwapSize2=%NewSwapSize2% (NewSwapSize2 := TotalPhys + NewSwapSize*1000000)`n`n`tIt will write = C:\pagefile.sys %NewSwapSize% %NewSwapSize%
-	IfEqual, debug, 1, goto, skipwrite2
 	MsgBox, 64, Total Physical Memory, TotalPhys = %TotalPhys% Bytes`n`nThe preset value set swap to 8 gb (ram + swap = 8 gb)`n`nNew swap value = %NewSwapSize% MB.
+	IfEqual, debug, 1, goto, skipwrite2
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, C:\pagefile.sys %NewSwapSize% %NewSwapSize%
 	skipwrite2:
 	MsgBox, 4, %title%, Changes where made (Not in debug). Reboot to take effect?  Click OK will reboot. No not reboot. New swap value = %NewSwapSize% MB.
@@ -272,8 +285,8 @@ ButtonTotal_12288:
 	NewSwapSize /= 1000000
 	IfEqual, debug, 1, MsgBox, MaxTotal=%MaxTotal% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%`n`nNewSwapSize2=%NewSwapSize2% (NewSwapSize2 := TotalPhys + NewSwapSize*1000000)`n`n`tIt will write = C:\pagefile.sys %NewSwapSize% %NewSwapSize%
 	sleep, 250
-	IfEqual, debug, 1, goto, skipwrite1
 	MsgBox, 64, Total Physical Memory, TotalPhys = %TotalPhys% Bytes`n`nThe preset value set swap to 12 gb (ram + swap = 12 gb)`n`nNew swap value = %NewSwapSize% MB.
+	IfEqual, debug, 1, goto, skipwrite1
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, C:\pagefile.sys %NewSwapSize% %NewSwapSize%
 	skipwrite1:
 	MsgBox, 4, %title%, Changes where made (Not in debug). Reboot to take effect?  Click OK will reboot. No not reboot.
@@ -299,10 +312,37 @@ ButtonTotal_16384:
 	NewSwapSize /= 1000000
 	IfEqual, debug, 1, MsgBox, MaxTotal=%MaxTotal% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%`n`nNewSwapSize2=%NewSwapSize2% (NewSwapSize2 := TotalPhys + NewSwapSize*1000000)`n`n`tIt will write = C:\pagefile.sys %NewSwapSize% %NewSwapSize%
 	sleep, 250
-	IfEqual, debug, 1, goto, skipwrite4
 	MsgBox, 64, Total Physical Memory, TotalPhys = %TotalPhys% Bytes`n`nThe preset value set swap to 16 gb (ram + swap = 16 gb)`n`nNew swap value = %NewSwapSize% MB.
+	IfEqual, debug, 1, goto, skipwrite4
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, C:\pagefile.sys %NewSwapSize% %NewSwapSize%
 	skipwrite4:
+	MsgBox, 4, %title%, Changes where made (Not in debug). Reboot to take effect?  Click OK will reboot. No not reboot.
+	IfMsgBox, Yes, Goto, reboot
+	IfMsgBox, NO, Goto, ExitApp
+
+ButtonTotal_32768:
+	;; https://autohotkey.com/board/topic/33622-report-physical-ram-installed/#entry213392
+	Gui, destroy
+	VarSetCapacity( MEMORYSTATUSEX,64,0 ), NumPut( 64,MEMORYSTATUSEX ) 
+	DllCall( "GlobalMemoryStatusEx", UInt,&MEMORYSTATUSEX )
+	TotalPhys := NumGet( MEMORYSTATUSEX,8,"Int64"),   VarSetCapacity( PhysMem,16,0 )
+	DllCall( "shlwapi.dll\StrFormatByteSize64A", Int64,TotalPhys, Str,PhysMem, UInt,16 )
+	;; StrFormatByteSize64 : http://msdn.microsoft.com/en-us/library/bb759971(VS.85).aspx
+	IfEqual, debug, 1, MsgBox, 64, Total Physical Memory, TotalPhys=%TotalPhys% Bytes`n PhysMem = %PhysMem%
+	;; 8192000000 8gb
+	;; 12288000000 12gb
+	;; max swap 16777216
+	SetEnv, MaxTotal, 32768000000
+	MaxTotal -= TotalPhys
+	SetEnv, NewSwapSize, %MaxTotal%
+	NewSwapSize2 := TotalPhys + NewSwapSize
+	NewSwapSize /= 1000000
+	IfEqual, debug, 1, MsgBox, MaxTotal=%MaxTotal% TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%`n`nNewSwapSize2=%NewSwapSize2% (NewSwapSize2 := TotalPhys + NewSwapSize*1000000)`n`n`tIt will write = C:\pagefile.sys %NewSwapSize% %NewSwapSize%
+	sleep, 250
+	MsgBox, 64, Total Physical Memory, TotalPhys = %TotalPhys% Bytes`n`nThe preset value set swap to 32 gb (ram + swap = 32 gb)`n`nNew swap value = %NewSwapSize% MB.
+	IfEqual, debug, 1, goto, skipwrite5
+	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, C:\pagefile.sys %NewSwapSize% %NewSwapSize%
+	skipwrite5:
 	MsgBox, 4, %title%, Changes where made (Not in debug). Reboot to take effect?  Click OK will reboot. No not reboot.
 	IfMsgBox, Yes, Goto, reboot
 	IfMsgBox, NO, Goto, ExitApp
@@ -369,6 +409,7 @@ GuiClose:
 	Gui, destroy
 	ExitApp
 
+ButtonReboot:
 reboot:
 	Shutdown, 6
 	exit
@@ -384,7 +425,7 @@ ButtonSecret:
 secret:
 	RegRead, NewTestKey1, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles
 	IfEqual, NewTestKey1,, SetEnv, NewTestKey1, Disabled
-	MsgBox, 64, WMC Fit Screen, All variables is shown here.`n`nTitle=%title% mode=%mode% version=%version% author=%author%.`n`nNewTestKey=%NewTestKey1%
+	MsgBox, 64, %title%, All variables is shown here.`n`nTitle=%title% mode=%mode% version=%version% author=%author%.`n`nNewTestKey=%NewTestKey1%
 	Return
 
 version:

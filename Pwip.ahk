@@ -18,7 +18,7 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. Left click here !
-	SetEnv, version, Version 2018-02-22-1249
+	SetEnv, version, Version 2018-03-13-2043
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files\
 	SetEnv, logoicon, ico_Windows.ico
@@ -50,7 +50,7 @@
 	Menu, tray, add, ---=== %title% ===---, about
 	Menu, Tray, Icon, ---=== %title% ===---, %icofolder%\%logoicon%
 	Menu, tray, add, Show logo, GuiLogo
-	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
+	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program.
 	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
 	Menu, tray, add, About && ReadMe, author
 	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
@@ -58,13 +58,18 @@
 	menu, tray, disable, Author %author%
 	Menu, tray, add, %version%, about
 	menu, tray, disable, %version%
+	menu, tray, add, Show Gui, start					; Default gui
+	Menu, Tray, Icon, Show Gui, %icofolder%\%logoicon%
+	Menu, Tray, Default, Show Gui
+	Menu, Tray, Click, 1
+	Menu, tray, add, Open A_WorkingDir, A_WorkingDir
 	Menu, tray, add,
 	Menu, tray, add, --== Control ==--, about
 	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
 	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
 	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
-	Menu, tray, add, Refresh (ini mod), doReload 				; Reload the script.
-	Menu, Tray, Icon, Refresh (ini mod), %icofolder%\ico_reboot.ico
+	Menu, tray, add, Refresh (Ini mod), doReload 				; Reload the script.
+	Menu, Tray, Icon, Refresh (Ini mod), %icofolder%\ico_reboot.ico
 	Menu, tray, add, Set Debug (Toggle), debug
 	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
 	Menu, tray, add, Pause (Toggle), pause
@@ -72,16 +77,12 @@
 	Menu, tray, add,
 	Menu, tray, add, --== Options ==--, about
 	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
-	menu, tray, add
 	menu, tray, add, Get the Win Resolution, ButtonWinRes
 	menu, tray, add, Get the Scr Resolution, ButtonScrRes
 	menu, tray, add, Get the Work Resolution, ButtonScrWork
 	menu, tray, add, Get the Sys Uptime, ButtonUptime
-	menu, tray, add
-	menu, tray, add, Show Gui, start
-	Menu, Tray, Icon, Show Gui, %icofolder%\%logoicon%
 	menu, tray, add,
-	Menu, Tray, Tip, %mode% Win + Z
+	Menu, Tray, Tip, %mode% Win + Z						; hotkey
 
 ;;--- Software start here ---
 
@@ -156,10 +157,10 @@ start:
 
 	Gui, Show, h320 w650, %title% %mode%
 
-	;;IfEqual, vMonitor2, checked, add, Text, x250 y300 w35 h20 , CHECKED MONITOR GUI
 	Return
 
 	Goto, start
+
 
 ;;--- Resolutions ---
 
@@ -385,45 +386,6 @@ ButtonUptime:
 			goto, sleep2
 	goto, sleep2
 
-ButtonIconViewer:
-	;; This is a developpement version for an DLL file icons library. This is not really implemented.
-	SetEnv, icons, 1
-	;;GuiControlGet, ReImage,, Reimage
-
-	IfNotExist, "C:\Program Files\Common Files\SharedIcons.dll", goto, start
-
-	Gui, destroy
-
-	nexticon2:
-
-	SharedIcons :=  "C:\Program Files\Common Files\SharedIcons.dll"		; Icon path
-
-	Gui, Font, s10
-	Gui, Add, Text, x275 y10 cBlack, ScriptDir=%A_ScriptDir%
-	Gui, Add, Text, x357 y25 cBlack, Icon Number=%Icons% 
-	Gui, Add, Picture, x25 y60 w400 h400 Icon%icons% AltSubmit, %SharedIcons%		; you can add X20 Y20 for position AND Icon1 means that the first icon of the DLL or EXE
-	Gui, Font, s14
-	Gui, Add, Button, x5 y5 w75 , Next
-	Gui, Add, Button, x90 y5 w75 , Tray
-	Gui, Add, Button, x175 y5 w75 , Menu
-	Gui, Add, Picture, Icon50, %A_ScriptDir%\SharedIcons.dll,%icons%
-	Gui, Show, , %title% Logo
-	Gui, Color, add8e6		; Hex color light blue
-	Return
-
-	ButtonNext:
-		IfEqual, icons, 10, goto, start
-		EnvAdd, icons, 1
-		Goto, nexticon2
-
-	ButtonTray:
-		Menu, Tray, Icon, SharedIcons.dll, %icons%
-		Goto, nexticon2
-
-	ButtonMenu:
-		Gui, destroy
-		Goto, start
-
 ;;--- Debug Pause ---
 
 debug:
@@ -465,7 +427,7 @@ ButtonWindowInfo:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, ActiveWindowInfo.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
-	Run, ActiveWindowInfo.exe
+	Run, %A_WorkingDir%\ActiveWindowInfo.exe
 	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
@@ -473,7 +435,7 @@ ButtonHddTemp:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, HddTemp.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
-	Run, HddTemp.exe
+	Run, %A_WorkingDir%\HddTemp.exe
 	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
@@ -481,7 +443,7 @@ ButtonProcestList:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, processlist.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
-	Run, processlist.exe
+	Run, %A_WorkingDir%\processlist.exe
 	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
@@ -489,7 +451,15 @@ ButtonActualSwap:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, actualswap.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
-	Run, actualswap.exe
+	Run, %A_WorkingDir%\actualswap.exe
+	IfEqual, reimage, 0, goto, GuiClose
+	Goto, start
+
+ButtonIconViewer:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, debug, 1, msgbox, reimage=%reimage%
+	IfNotExist, IconViewer.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
+	Run, %A_WorkingDir%\IconViewer.exe
 	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
@@ -520,7 +490,7 @@ GuiClose:
 
 ButtonSecret:
 secret:
-	MsgBox, 64, WMC Fit Screen, All variables is shown here.`n`nTitle=%title% mode=%mode% version=%version% author=%author%.`n`nClipboard (if text)=%clipboard%
+	MsgBox, 64, %title%, SECRET MsgBox All variables is shown here.`n`ntitle=%title% mode=%mode% version=%version% author=%author% LogoIcon=%logoicon% Debug=%debug%`n`nA_WorkingDir=%A_WorkingDir%`nIcoFolder=%icofolder%`n`nClipboard (if text)=%clipboard%
 	Return
 
 about:
@@ -548,13 +518,19 @@ ButtonLogoIcon:
 GuiLogo:
 	Gui, 4:Add, Picture, x25 y25 w400 h400, %icofolder%\%logoicon%
 	Gui, 4:Show, w450 h450, %title% Logo
-	;;Gui, 4:Color, 000000
+	Gui, 4:Color, 000000
+	Gui, 4:-MinimizeBox
 	Sleep, 500
 	Return
 
 	4GuiClose:
 	Gui 4:Cancel
 	return
+
+A_WorkingDir:
+	IfEqual, debug, 1, msgbox, run, explorer.exe "%A_WorkingDir%"
+	run, explorer.exe "%A_WorkingDir%"
+	Return
 
 ;;--- End of script ---
 ;

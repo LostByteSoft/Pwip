@@ -2,6 +2,7 @@
 @taskkill /f /im "ActiveWindowInfo.exe"
 @taskkill /f /im "HddTemp.exe"
 @taskkill /f /im "ActualSwap.exe"
+@taskkill /f /im "IconViewer.exe"
 if exist "C:\Program Files\Common Files\SharedIcons.dll" goto next
 copy "SharedIcons.dll" "C:\Program Files\Common Files\"
 :next
