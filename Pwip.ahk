@@ -18,7 +18,8 @@
 
 	SetEnv, title, Pwip
 	SetEnv, mode, Put Windows In Place. Left click here !
-	SetEnv, version, Version 2018-03-13-2043
+
+	SetEnv, version, Version 2018-03-24-1811
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files\
 	SetEnv, logoicon, ico_Windows.ico
@@ -30,19 +31,20 @@
 	SysGet, Mon2, Monitor, 2
 
 	;; Specific Icons (or files)
-
 	FileInstall, ico_Windows.ico, %icofolder%\ico_Windows.ico, 0
+	FileInstall, ico_dll.ico, %icofolder%\ico_dll.ico, 0
 
 	;; Common ico
-
-	FileInstall, ico_about.ico, %icofolder%\ico_about.ico, 0
-	FileInstall, ico_lock.ico, %icofolder%\ico_lock.ico, 0
-	FileInstall, ico_options.ico, %icofolder%\ico_options.ico, 0
-	FileInstall, ico_reboot.ico, %icofolder%\ico_reboot.ico, 0
-	FileInstall, ico_shut.ico, %icofolder%\ico_shut.ico, 0
-	FileInstall, ico_debug.ico, %icofolder%\ico_debug.ico, 0
-	FileInstall, ico_HotKeys.ico, %icofolder%\ico_HotKeys.ico, 0
-	FileInstall, ico_pause.ico, %icofolder%\ico_pause.ico, 0
+	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0
+	FileInstall, SharedIcons\ico_lock.ico, %icofolder%\ico_lock.ico, 0
+	FileInstall, SharedIcons\ico_options.ico, %icofolder%\ico_options.ico, 0
+	FileInstall, SharedIcons\ico_reboot.ico, %icofolder%\ico_reboot.ico, 0
+	FileInstall, SharedIcons\ico_shut.ico, %icofolder%\ico_shut.ico, 0
+	FileInstall, SharedIcons\ico_debug.ico, %icofolder%\ico_debug.ico, 0
+	FileInstall, SharedIcons\ico_HotKeys.ico, %icofolder%\ico_HotKeys.ico, 0
+	FileInstall, SharedIcons\ico_pause.ico, %icofolder%\ico_pause.ico, 0
+	FileInstall, SharedIcons\ico_loupe.ico, %icofolder%\ico_loupe.ico, 0
+	FileInstall, SharedIcons\ico_folder.ico, %icofolder%\ico_folder.ico, 0
 
 ;;--- Menu Tray options ---
 
@@ -52,27 +54,31 @@
 	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program.
 	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
-	Menu, tray, add, About && ReadMe, author
+	Menu, tray, add, About && ReadMe, author				; infos about author
 	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
-	Menu, tray, add, Author %author%, about
+	Menu, tray, add, Author %author%, about					; author msg box
 	menu, tray, disable, Author %author%
-	Menu, tray, add, %version%, about
+	Menu, tray, add, %version%, about					; version of the software
 	menu, tray, disable, %version%
-	menu, tray, add, Show Gui, start					; Default gui
-	Menu, Tray, Icon, Show Gui, %icofolder%\%logoicon%
-	Menu, Tray, Default, Show Gui
-	Menu, Tray, Click, 1
-	Menu, tray, add, Open A_WorkingDir, A_WorkingDir
+	Menu, tray, add, Open project web page, webpage				; open web page project
+	Menu, Tray, Icon, Open project web page, %icofolder%\ico_HotKeys.ico
 	Menu, tray, add,
 	Menu, tray, add, --== Control ==--, about
 	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
+	menu, tray, add, Show Gui (Same as click), start			; Default gui open
+	Menu, Tray, Icon, Show Gui (Same as click), %icofolder%\ico_loupe.ico
+	Menu, Tray, Default, Show Gui (Same as click)
+	Menu, Tray, Click, 1
+	Menu, tray, add, Set Debug (Toggle), debug				; debug msg
+	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
+	Menu, tray, add, Open A_WorkingDir, A_WorkingDir			; open where the exe is
+	Menu, Tray, Icon, Open A_WorkingDir, %icofolder%\ico_folder.ico
+	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
 	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
 	Menu, tray, add, Refresh (Ini mod), doReload 				; Reload the script.
 	Menu, Tray, Icon, Refresh (Ini mod), %icofolder%\ico_reboot.ico
-	Menu, tray, add, Set Debug (Toggle), debug
-	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
-	Menu, tray, add, Pause (Toggle), pause
+	Menu, tray, add, Pause (Toggle), pause					; pause the script
 	Menu, Tray, Icon, Pause (Toggle), %icofolder%\ico_pause.ico
 	Menu, tray, add,
 	Menu, tray, add, --== Options ==--, about
@@ -131,7 +137,6 @@ start:
 	Gui, Add, Button, x250 y175 w38 h30 , 1/2 L
 	Gui, Add, Button, x287 y175 w38 h30 , 1/2 R
 	Gui, Add, Button, x250 y225 w75 h30 , FitToScreen
-	Gui, Add, Button, x250 y275 w75 h30 , Icon Viewer
 
 	;; 4 col x350
 	Gui, Add, Text, x370 y50 w50 h20 , Exe call
@@ -159,162 +164,9 @@ start:
 
 	Return
 
-	Goto, start
-
-
 ;;--- Resolutions ---
 
-Button640x480:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 640, 480
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button800x600:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 800, 600
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1024x768:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1024, 768
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1152x864:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1152, 864
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1280x720:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1280, 720
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1360x768:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1360, 768
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1600x900:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1600, 900
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1600x1200:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1600, 1200
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1680x1050:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1680, 1050
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1920x1080:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , , , 1920, 1080
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-ButtonFitToScreen:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	SysGet, Mon10, MonitorWorkArea
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	WinMove, %activeWindow%, , 0, 0, %Mon10Right%, %Mon10Bottom%
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1/2L:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	SysGet, Mon15, MonitorWorkArea
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	SetEnv, Mon15Right1, %Mon15Right%
-	Mon15Right1 /= 2
-	;; MsgBox, Mon 15 Left: %Mon15Left% -- Top: %Mon15Top% -- Right: %Mon15Right% -- Bottom %Mon15Bottom% -- Right1=%Mon15Right1% -- activeWindow=%activeWindow%
-	WinMove, %activeWindow%, , 0, 0, %Mon15Right1%, %Mon15Bottom%
-	WinActivate, %activeWindow%
-	Goto, sleep2
-
-Button1/2R:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, reimage, 0, Gui, destroy
-	SysGet, Mon16, MonitorWorkArea
-	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
-	KeyWait, LButton, D
-	WinGetTitle, activeWindow, A
-	WinGetPos, X, Y
-	SetEnv, Mon16Right1, %Mon16Right%
-	Mon16Right1 /= 2
-	;; MsgBox, Mon 16 Left: %Mon16Left% -- Top: %Mon16Top% -- Right: %Mon16Right% -- Bottom %Mon16Bottom% -- Mon16Right1=%Mon16Right1% -- activeWindow=%activeWindow% -- %Mon16Right1% 0 %Mon16Right1% %Mon16Bottom%
-	WinMove, %activeWindow%, , %Mon16Right1%, 0, %Mon16Right1%, %Mon16Bottom%
-	WinActivate, %activeWindow%
-	Goto, sleep2
+#include Include_Buttons.ahk
 
 ButtonWinRes:
 	GuiControlGet, ReImage,, Reimage
@@ -386,41 +238,6 @@ ButtonUptime:
 			goto, sleep2
 	goto, sleep2
 
-;;--- Debug Pause ---
-
-debug:
-	IfEqual, debug, 0, goto, debug1
-	IfEqual, debug, 1, goto, debug0
-
-	debug0:
-	SetEnv, debug, 0
-	TrayTip, %title%, Deactivated ! debug=%debug%, 1, 2
-	Goto, sleep2
-
-	debug1:
-	SetEnv, debug, 1
-	TrayTip, %title%, Activated ! debug=%debug%, 1, 2
-	Goto, sleep2
-
-pause:
-	Ifequal, pause, 0, goto, paused
-	Ifequal, pause, 1, goto, unpaused
-
-	paused:
-	SetEnv, pause, 1
-	goto, sleep
-
-	unpaused:	
-	Menu, Tray, Icon, %logoicon%
-	SetEnv, pause, 0
-	Goto, start
-
-	sleep:
-	Menu, Tray, Icon, %icofolder%\ico_pause.ico
-	sleep2:
-	sleep, 500000
-	goto, sleep2
-
 ;;--- Function Exe Call ---
 
 ButtonWindowInfo:
@@ -455,16 +272,47 @@ ButtonActualSwap:
 	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
-ButtonIconViewer:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, debug, 1, msgbox, reimage=%reimage%
-	IfNotExist, IconViewer.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
-	Run, %A_WorkingDir%\IconViewer.exe
-	IfEqual, reimage, 0, goto, GuiClose
+;;--- Debug ---
+
+debug:
+	IfEqual, debug, 0, goto, debug1
+	IfEqual, debug, 1, goto, debug0
+
+	debug0:
+	SetEnv, debug, 0
+	TrayTip, %title%, Deactivated ! debug=%debug%, 1, 2
+	Goto, sleep2
+
+	debug1:
+	SetEnv, debug, 1
+	TrayTip, %title%, Activated ! debug=%debug%, 1, 2
+	Goto, sleep2
+
+;;--- Pause ---
+
+pause:
+	Ifequal, pause, 0, goto, paused
+	Ifequal, pause, 1, goto, unpaused
+
+	paused:
+	SetEnv, pause, 1
+	goto, sleep
+
+	unpaused:	
+	Menu, Tray, Icon, %logoicon%
+	SetEnv, pause, 0
 	Goto, start
 
-;;--- Quit (escape , esc) ---
+	sleep:
+	Menu, Tray, Icon, %icofolder%\ico_pause.ico
+	sleep2:
+	sleep, 500000
+	goto, sleep2
 
+;;--- Quit ---
+
+;; Escape::
+	ExitApp
 
 ButtonQuit:
 	Gui, destroy
@@ -483,7 +331,6 @@ ExitApp:
 
 GuiClose:
 	Gui, destroy
-	;;IfEqual, fromlogo, 1, Goto, start
 	Goto, sleep2
 
 ;;--- Tray Bar (must be at end of file) ---
@@ -511,10 +358,6 @@ ButtonAuthor:
 ButtonLogoIcon:
 	GuiControlGet, ReImage,, Reimage
 	IfEqual, reimage, 0, Gui, destroy
-
-;;;	%icofolder%\SharedIcons.dll := A_ScriptDir . "\%icofolder%\SharedIcons.dll"
-;;;	Gui, 4:Add, Picture, x25 y25 w400 h400 Icon8 AltSubmit, %icofolder%\SharedIcons.dll
-
 GuiLogo:
 	Gui, 4:Add, Picture, x25 y25 w400 h400, %icofolder%\%logoicon%
 	Gui, 4:Show, w450 h450, %title% Logo
@@ -530,6 +373,10 @@ GuiLogo:
 A_WorkingDir:
 	IfEqual, debug, 1, msgbox, run, explorer.exe "%A_WorkingDir%"
 	run, explorer.exe "%A_WorkingDir%"
+	Return
+
+webpage:
+	run, https://github.com/LostByteSoft/%title%
 	Return
 
 ;;--- End of script ---

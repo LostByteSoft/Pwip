@@ -159,7 +159,7 @@ return
 
 ;;--- Exit close quit ---
 
-GuiClose:
+GuiClose9:
 ExitApp
 
 ;;--- End Script ---
