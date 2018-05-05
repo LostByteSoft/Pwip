@@ -7,6 +7,8 @@
 ;;	This entire thing (work) is a developpement tool for AHK scripting.
 ;;	Use an external DLL file for icon is shit load of job and the final quality is less.
 
+;;	2018-04-15-0901 removed all icons for more compatibility
+
 ;;--- Softwares Variables ---
 
 	SetWorkingDir, %A_ScriptDir%
@@ -18,70 +20,44 @@
 
 	SetEnv, title, ActualSwap
 	SetEnv, mode, Get the actual size of the page file.
-	SetEnv, version, Version 2018-03-24-1816
+	SetEnv, version, Version 2018-05-05-1339
 	SetEnv, Author, LostByteSoft
 	SetEnv, debug, 0
-	SetEnv, logoicon, ico_options.ico
-	SetEnv, icofolder, C:\Program Files\Common Files
 
 	;; Specific Icons (or files)
 
 	;; Common ico
-	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0
-	FileInstall, SharedIcons\ico_lock.ico, %icofolder%\ico_lock.ico, 0
-	FileInstall, SharedIcons\ico_options.ico, %icofolder%\ico_options.ico, 0
-	FileInstall, SharedIcons\ico_reboot.ico, %icofolder%\ico_reboot.ico, 0
-	FileInstall, SharedIcons\ico_shut.ico, %icofolder%\ico_shut.ico, 0
-	FileInstall, SharedIcons\ico_debug.ico, %icofolder%\ico_debug.ico, 0
-	FileInstall, SharedIcons\ico_HotKeys.ico, %icofolder%\ico_HotKeys.ico, 0
-	FileInstall, SharedIcons\ico_pause.ico, %icofolder%\ico_pause.ico, 0
-	FileInstall, SharedIcons\ico_loupe.ico, %icofolder%\ico_loupe.ico, 0
-	FileInstall, SharedIcons\ico_folder.ico, %icofolder%\ico_folder.ico, 0
 
 ;;--- Menu Tray options ---
 
 	Menu, Tray, NoStandard
 	Menu, tray, add, ---=== %title% ===---, about
-	Menu, Tray, Icon, ---=== %title% ===---, %icofolder%\%logoicon%
-	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program.
-	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
 	Menu, tray, add, About && ReadMe, author				; infos about author
-	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
 	Menu, tray, add, Author %author%, about					; author msg box
 	menu, tray, disable, Author %author%
 	Menu, tray, add, %version%, about					; version of the software
 	menu, tray, disable, %version%
 	Menu, tray, add, Open project web page, webpage				; open web page project
-	Menu, Tray, Icon, Open project web page, %icofolder%\ico_HotKeys.ico
 	Menu, tray, add,
 	Menu, tray, add, --== Control ==--, about
-	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
 	menu, tray, add, Show Gui (Same as click), start			; Default gui open
-	Menu, Tray, Icon, Show Gui (Same as click), %icofolder%\ico_loupe.ico
 	Menu, Tray, Default, Show Gui (Same as click)
 	Menu, Tray, Click, 1
 	Menu, tray, add, Set Debug (Toggle), debug				; debug msg
-	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
 	Menu, tray, add, Open A_WorkingDir, A_WorkingDir			; open where the exe is
-	Menu, Tray, Icon, Open A_WorkingDir, %icofolder%\ico_folder.ico
 	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
-	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
 	Menu, tray, add, Refresh (Ini mod), doReload 				; Reload the script.
-	Menu, Tray, Icon, Refresh (Ini mod), %icofolder%\ico_reboot.ico
 	Menu, tray, add, Pause (Toggle), pause					; pause the script
-	Menu, Tray, Icon, Pause (Toggle), %icofolder%\ico_pause.ico
 	Menu, tray, add,
 	Menu, tray, add, --== Options ==--, about
-	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
 	menu, tray, add,
 	Menu, Tray, Tip, %mode%
 
 ;;--- Software start here (menu) ---
 
 Start:
-	Menu, Tray, Icon, %icofolder%\ico_options.ico
 
 	;; https://autohotkey.com/board/topic/33622-report-physical-ram-installed/#entry213392
 	Gui, destroy
@@ -90,16 +66,23 @@ Start:
 	TotalPhys := NumGet( MEMORYSTATUSEX,8,"Int64"),   VarSetCapacity( PhysMem,16,0 )
 	DllCall( "shlwapi.dll\StrFormatByteSize64A", Int64,TotalPhys, Str,PhysMem, UInt,16 )
 	;; StrFormatByteSize64 : http://msdn.microsoft.com/en-us/library/bb759971(VS.85).aspx
-	IfEqual, debug, 1, MsgBox, 64, Total Physical Memory, TotalPhys=%TotalPhys% Bytes`n PhysMem = %PhysMem%
+	IfEqual, debug, 1, MsgBox, 64, Total Physical Memory, Start: TotalPhys=%TotalPhys% Bytes`n PhysMem = %PhysMem%
 
 	RegRead, TestKey, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles
-	IfEqual, TestKey,, SetEnv, TestKey, Disabled
+	IfEqual, debug, 1, msgbox, Start: FIRST TestKey = %testkey%
+	IfLess, TestKey, 0, goto, setdisable
+	goto, gui
+
+setdisable:
+	SetEnv, TestKey, Disabled
+	IfEqual, debug, 1, msgbox, Start: SECOND teskey = %testkey%
+
 
 gui:
-	IfEqual, debug, 1, MsgBox, START :`n`nTestKey=%TestKey%
+	IfEqual, debug, 1, MsgBox, GUI :`n`nTestKey=%TestKey%
 
 	;; Top lines
-	Gui, Add, Text, x25 y10 w550 h30 , Actual swap file is %TestKey%. Ram is = %TotalPhys%
+	Gui, Add, Text, x25 y10 w550 h30 , The swap could be only in C:\ drive`tActual swap file is %TestKey%.`tRam is = %TotalPhys%
 	;;Gui, Add, Text, x325 y5 w550 h30 , Change value ?
 
 	;; 1 col
@@ -112,13 +95,14 @@ gui:
 	;; 2 col x150
 	Gui, Add, Text, x170 y50 w50 h20 , Preset ?
 	Gui, Add, Button, x150 y75 w75 h30 , Preset_2048
-	Gui, Add, Button, x150 y125 w75 h30 , Preset_4096
+	Gui, Add, Button, x150 y125 w75 h30 , Preset_4095
 	Gui, Add, Button, x150 y175 w75 h30 , Preset_8192
 	Gui, Add, Button, x150 y225 w75 h30 , Preset_16384
+	Gui, Add, Button, x150 y275 w75 h30 , Preset_32768
 
 	;; 3 col x250
 	Gui, Add, Text, x270 y50 w50 h20 , Total ?
-	Gui, Add, Button, x250 y75 w75 h30 , Total_4096
+	Gui, Add, Button, x250 y75 w75 h30 , Total_4095
 	Gui, Add, Button, x250 y125 w75 h30 , Total_8192
 	Gui, Add, Button, x250 y175 w75 h30 , Total_16384
 	Gui, Add, Button, x250 y225 w75 h30 , Total_32768
@@ -135,7 +119,7 @@ gui:
 
 	;; 6 col x550
 	Gui, Add, Text, x570 y50 w50 h20 , Options !
-	Gui, Add, Button, x550 y75 w75 h30 , LogoIcon
+	Gui, Add, Button, x550 y75 w75 h30 , Webpage
 	Gui, Add, Button, x550 y125 w75 h30 , Secret
 	Gui, Add, Button, x550 y175 w75 h30 , Author
 	Gui, Add, Button, x550 y225 w75 h30 , ReLoad
@@ -182,7 +166,7 @@ ButtonPreset_2048:
 	IfMsgBox, NO, Goto, ExitApp
 	Goto, start
 
-ButtonPreset_4096:
+ButtonPreset_4095:
 	SetEnv, NewSwapSize, C:\PagingFiles.swp 4095 4095
 	IfEqual, debug, 1, MsgBox, Total Physical Memory TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
 	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, %NewSwapSize%
@@ -215,9 +199,17 @@ ButtonPreset_16384:
 	IfMsgBox, Yes, Goto, reboot
 	IfMsgBox, NO, Goto, ExitApp
 
+ButtonPreset_32768:
+	SetEnv, NewSwapSize, C:\PagingFiles.swp 32768 32768
+	IfEqual, debug, 1, MsgBox, Total Physical Memory TotalPhys=%TotalPhys% NewSwapSize=%NewSwapSize%
+	RegWrite, REG_SZ, HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles, %NewSwapSize%
+	MsgBox, 4, %title%, Changes where made. Reboot to take effect?  Click OK will reboot. NewSwapSize=%NewSwapSize%
+	IfMsgBox, Yes, Goto, reboot
+	IfMsgBox, NO, Goto, ExitApp
+
 ;;--- Total ---
 
-ButtonTotal_4096:
+ButtonTotal_4095:
 	;; https://autohotkey.com/board/topic/33622-report-physical-ram-installed/#entry213392
 	Gui, destroy
 	VarSetCapacity( MEMORYSTATUSEX,64,0 ), NumPut( 64,MEMORYSTATUSEX ) 
@@ -230,7 +222,7 @@ ButtonTotal_4096:
 	;; 12288000000 12gb
 	;; max swap 16777216
 	;; SetEnv, MaxTotal, 8192000000 must add 199
-	SetEnv, MaxTotal, 4096000000
+	SetEnv, MaxTotal, 4095000000
 	MaxTotal -= TotalPhys
 	SetEnv, NewSwapSize, %MaxTotal%
 	NewSwapSize2 := TotalPhys + NewSwapSize
@@ -356,7 +348,7 @@ ButtonRead:
 	RegRead, NewTestKey1, HKEY_LOCAL_MACHINE, SYSTEM\ControlSet001\Control\Session Manager\Memory Management, PagingFiles
 	IfEqual, NewTestKey1,, SetEnv, NewTestKey1, Disabled
 	MsgBox, 0, %title%, Swap file and value is (NewTestKey) = %NewTestKey1%
-	Goto, gui
+	return
 
 ;;--- Debug Pause ---
 
@@ -383,12 +375,10 @@ pause:
 	goto, sleep
 
 	unpaused:	
-	Menu, Tray, Icon, %icofolder%\%logoicon%
 	SetEnv, pause, 0
 	Goto, start
 
 	sleep:
-	Menu, Tray, Icon, %icofolder%\ico_pause.ico
 	sleep2:
 	sleep, 500000
 	goto, sleep2
@@ -442,25 +432,14 @@ author:
 	MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to set the swap memory in windows. It can set a min/max of swap or a fixed capacity (ram + swap).`n`n`tGo to https://github.com/LostByteSoft
 	Return
 
-ButtonLogoIcon:
-GuiLogo:
-	Gui, 4:Add, Picture, x25 y25 w400 h400, %icofolder%\%logoicon%
-	Gui, 4:Show, w450 h450, %title% Logo
-	;;Gui, 4:Color, 000000
-	Sleep, 500
-	Return
-
-	4GuiClose:
-	Gui 4:Cancel
-	return
-
 A_WorkingDir:
 	IfEqual, debug, 1, msgbox, run, explorer.exe "%A_WorkingDir%"
 	run, explorer.exe "%A_WorkingDir%"
 	Return
 
+ButtonWebpage:
 webpage:
-	run, https://github.com/LostByteSoft/%title%
+	run, https://github.com/LostByteSoft/pwip
 	Return
 
 ;;--- End of script ---
