@@ -7,6 +7,10 @@
 ;;	This entire thing (work) is a developpement tool for AHK scripting.
 ;;	Use an external EXE or DLL file for icon is shit load of job and the final quality is less.
 
+;;--- Revisions ---
+
+;;	2018-05-12-0929 adding control windows 10
+
 ;;--- Softwares Variables ---
 
 	SetWorkingDir, %A_ScriptDir%
@@ -16,10 +20,10 @@
 	SetTitleMatchMode, Slow
 	SetTitleMatchMode, 2
 
-	SetEnv, title, Pwip
-	SetEnv, mode, Put Windows In Place. Left click here !
+	SetEnv, title, Pwip && Control
+	SetEnv, mode, Put Windows In Place and control windows.
 
-	SetEnv, version, Version 2018-03-24-1811
+	SetEnv, version, Version 2018-05-12-1006
 	SetEnv, Author, LostByteSoft
 	SetEnv, icofolder, C:\Program Files\Common Files\
 	SetEnv, logoicon, ico_Windows.ico
@@ -31,8 +35,9 @@
 	SysGet, Mon2, Monitor, 2
 
 	;; Specific Icons (or files)
-	FileInstall, ico_Windows.ico, %icofolder%\ico_Windows.ico, 0
-	FileInstall, ico_dll.ico, %icofolder%\ico_dll.ico, 0
+	FileInstall, SharedIcons\ico_Windows.ico, %icofolder%\ico_Windows.ico, 0
+	FileInstall, SharedIcons\ico_dll.ico, %icofolder%\ico_dll.ico, 0
+	FileInstall, SharedIcons\ico_panel.ico, %icofolder%\ico_panel.ico, 0
 
 	;; Common ico
 	FileInstall, SharedIcons\ico_about.ico, %icofolder%\ico_about.ico, 0
@@ -45,6 +50,7 @@
 	FileInstall, SharedIcons\ico_pause.ico, %icofolder%\ico_pause.ico, 0
 	FileInstall, SharedIcons\ico_loupe.ico, %icofolder%\ico_loupe.ico, 0
 	FileInstall, SharedIcons\ico_folder.ico, %icofolder%\ico_folder.ico, 0
+	FileInstall, SharedIcons\ico_txt.ico, %icofolder%\ico_txt.ico, 0
 
 ;;--- Menu Tray options ---
 
@@ -73,6 +79,8 @@
 	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
 	Menu, tray, add, Open A_WorkingDir, A_WorkingDir			; open where the exe is
 	Menu, Tray, Icon, Open A_WorkingDir, %icofolder%\ico_folder.ico
+	Menu, tray, add, Open Source, Source
+	Menu, Tray, Icon, Open Source, %icofolder%\ico_txt.ico
 	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
 	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
@@ -83,12 +91,15 @@
 	Menu, tray, add,
 	Menu, tray, add, --== Options ==--, about
 	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
-	menu, tray, add, Get the Win Resolution, ButtonWinRes
-	menu, tray, add, Get the Scr Resolution, ButtonScrRes
-	menu, tray, add, Get the Work Resolution, ButtonScrWork
-	menu, tray, add, Get the Sys Uptime, ButtonUptime
+	menu, tray, add, Get the Window Resolution, ButtonWinRes
+	menu, tray, add, Get the Screen Resolution, ButtonScrRes
+	menu, tray, add, Get the Work (screen - traybar) Resolution, ButtonScrWork
+	menu, tray, add, Get the System Uptime, ButtonUptime
+	Menu, tray, add,
+	Menu, tray, add, Windows control panel, control
+	Menu, Tray, Icon, Windows control panel, %icofolder%\ico_panel.ico
 	menu, tray, add,
-	Menu, Tray, Tip, %mode% Win + Z						; hotkey
+	Menu, Tray, Tip, %mode%
 
 ;;--- Software start here ---
 
@@ -130,20 +141,22 @@ start:
 	Gui, Add, Button, x150 y225 w75 h30 , 1600x900
 	Gui, Add, Button, x150 y275 w75 h30 , 1920x1080
 
-	;; 3 col x2«50
+	;; 3 col x250
 	Gui, Add, Text, x270 y50 w35 h20 , 16 / 10
 	Gui, Add, Button, x250 y75 w75 h30 , 1680x1050
 	Gui, Add, Text, x275 y107 w40 h20 , Vary
-	Gui, Add, Button, x250 y175 w38 h30 , 1/2 L
-	Gui, Add, Button, x287 y175 w38 h30 , 1/2 R
-	Gui, Add, Button, x250 y225 w75 h30 , FitToScreen
+	Gui, Add, Button, x250 y125 w38 h30 , 1/2 L
+	Gui, Add, Button, x287 y125 w38 h30 , 1/2 R
+	Gui, Add, Button, x250 y175 w75 h30 , FitToScreen
 
 	;; 4 col x350
 	Gui, Add, Text, x370 y50 w50 h20 , Exe call
-	Gui, Add, Button, x350 y75 w75 h30 , HddTemp
+	Gui, Add, Button, x350 y75 w75 h30 , Actual Swap
 	Gui, Add, Button, x350 y125 w75 h30 , WindowInfo
 	Gui, Add, Button, x350 y175 w75 h30 , ProcestList
-	Gui, Add, Button, x350 y225 w75 h30 , Actual Swap
+
+	Gui, Add, Text, x365 y260 w45 h20 , Windows
+	Gui, Add, Button, x350 y275 w75 h30 , ControlPanel
 
 	;; 5 col x450
 	Gui, Add, Text, x470 y50 w35 h20 , Get the
@@ -164,9 +177,167 @@ start:
 
 	Return
 
+;;--- Script ---
+
+control:
+ButtonControlPanel:
+	run, control
+	return
+
 ;;--- Resolutions ---
 
-#include Include_Buttons.ahk
+
+Button640x480:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 640, 480
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button800x600:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 800, 600
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1024x768:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1024, 768
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1152x864:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1152, 864
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1280x720:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1280, 720
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1360x768:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1360, 768
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1600x900:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1600, 900
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1600x1200:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1600, 1200
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1680x1050:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1680, 1050
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1920x1080:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , , , 1920, 1080
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+ButtonFitToScreen:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	SysGet, Mon10, MonitorWorkArea
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	WinMove, %activeWindow%, , 0, 0, %Mon10Right%, %Mon10Bottom%
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1/2L:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	SysGet, Mon15, MonitorWorkArea
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	SetEnv, Mon15Right1, %Mon15Right%
+	Mon15Right1 /= 2
+	;; MsgBox, Mon 15 Left: %Mon15Left% -- Top: %Mon15Top% -- Right: %Mon15Right% -- Bottom %Mon15Bottom% -- Right1=%Mon15Right1% -- activeWindow=%activeWindow%
+	WinMove, %activeWindow%, , 0, 0, %Mon15Right1%, %Mon15Bottom%
+	WinActivate, %activeWindow%
+	Goto, sleep2
+
+Button1/2R:
+	GuiControlGet, ReImage,, Reimage
+	IfEqual, reimage, 0, Gui, destroy
+	SysGet, Mon16, MonitorWorkArea
+	TrayTip, %title%, %mode% Click on a windows with LEFT mouse., 2, 1
+	KeyWait, LButton, D
+	WinGetTitle, activeWindow, A
+	WinGetPos, X, Y
+	SetEnv, Mon16Right1, %Mon16Right%
+	Mon16Right1 /= 2
+	;; MsgBox, Mon 16 Left: %Mon16Left% -- Top: %Mon16Top% -- Right: %Mon16Right% -- Bottom %Mon16Bottom% -- Mon16Right1=%Mon16Right1% -- activeWindow=%activeWindow% -- %Mon16Right1% 0 %Mon16Right1% %Mon16Bottom%
+	WinMove, %activeWindow%, , %Mon16Right1%, 0, %Mon16Right1%, %Mon16Bottom%
+	WinActivate, %activeWindow%
+	Goto, sleep2
 
 ButtonWinRes:
 	GuiControlGet, ReImage,, Reimage
@@ -245,14 +416,6 @@ ButtonWindowInfo:
 	IfEqual, debug, 1, msgbox, reimage=%reimage%
 	IfNotExist, ActiveWindowInfo.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
 	Run, %A_WorkingDir%\ActiveWindowInfo.exe
-	IfEqual, reimage, 0, goto, GuiClose
-	Goto, start
-
-ButtonHddTemp:
-	GuiControlGet, ReImage,, Reimage
-	IfEqual, debug, 1, msgbox, reimage=%reimage%
-	IfNotExist, HddTemp.exe, MsgBox, All *.exe files must be in same folder of Pwip.exe
-	Run, %A_WorkingDir%\HddTemp.exe
 	IfEqual, reimage, 0, goto, GuiClose
 	Goto, start
 
@@ -376,8 +539,13 @@ A_WorkingDir:
 	Return
 
 webpage:
-	run, https://github.com/LostByteSoft/%title%
+	run, https://github.com/LostByteSoft/IrfanConvert-WMC
 	Return
+
+source:
+	FileInstall, pwip.ahk, pwip.ahk, 1
+	run, "%A_ScriptDir%\pwip.ahk"
+	return
 
 ;;--- End of script ---
 ;
