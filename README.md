@@ -7,12 +7,12 @@ This software is usefull to place automaticly a windows in a specified resolutio
 
 This entire thing (work) is a developpement tool for AHK scripting. And i use it for testing purposes.
 
-![Screenshot](ImgGit\Picture_4.jpg)
+![Screenshot](ImgGit/Picture_4.jpg)
 
-![Screenshot](ImgGit\Picture_5.jpg)
+![Screenshot](ImgGit/Picture_5.jpg)
 
-![Screenshot](ImgGit\Picture_6.jpg)
+![Screenshot](ImgGit/Picture_6.jpg)
 
-![Screenshot](ImgGit\Picture_7.jpg)
+![Screenshot](ImgGit/Picture_7.jpg)
 
-![Screenshot](ImgGit\Picture_8.jpg)
+![Screenshot](ImgGit/Picture_8.jpg)
